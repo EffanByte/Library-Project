@@ -8,3 +8,10 @@
         <h5 class="card-title">{book.title}</h5>
     </div>
 </div>
+
+<style>
+    .card{
+        margin: 2vh;
+        
+    }
+</style>
