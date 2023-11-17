@@ -1,0 +1,41 @@
+.background-image {
+    position: fixed;
+    /* Fixed position */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('librarybg.jpg');
+    /* Path to your image */
+    background-size: cover;
+    /* or use 'contain' based on your requirement */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* This makes the background static */
+    z-index: -1;
+    /* Ensures the background stays behind other content */
+}
+.heading{
+    display:flex;
+    justify-content: center;
+    color: black;
+    font-size: larger;
+    font-weight: 700;
+    padding-top: 5vh;
+    -webkit-text-stroke-color: white;
+    -webkit-text-stroke-width: 1px;
+}
+
+.container{
+    margin-top: 5vh;
+margin-bottom: 10vh;
+background-color: white;
+min-height: 100vh;
+}
+
+footer{
+    background-color: black;
+    color: white;
+    
+}
