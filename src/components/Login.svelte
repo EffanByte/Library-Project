@@ -10,7 +10,7 @@
     function handleLogin() {
         // Implement your login logic here
         console.log(username, password);
-        close();
+        close(); 
     }
     function close(){
         show = false;
