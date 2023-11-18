@@ -11,7 +11,6 @@
 
 <style>
     .card{
-        margin: 2vh;
-        
+        margin-top: 5vh;
     }
 </style>

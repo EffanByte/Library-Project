@@ -1,4 +1,14 @@
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<script>
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
+    function openLogin() {
+        console.log("Testing");
+        dispatch('login');
+    }
+</script>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <!-- Logo -->
         <a class="navbar-brand" href="#">
@@ -19,7 +29,7 @@
 
         <!-- Login and Signup Buttons -->
         <div class="d-flex">
-            <button class="btn btn-outline-primary" type="button">Login</button>
+            <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
             <button class="btn btn-primary" type="button" style="margin-left: 10px;">Sign Up</button>
         </div>
     </div>

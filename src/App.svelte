@@ -1,10 +1,16 @@
 <script>
-	import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-	 import 'bootstrap/dist/css/bootstrap.min.css';
-   import Navbar from "./components/navbar.svelte";
-   import BackG from "./components/BackG.svelte";
-   import BookCard from './components/BookCard.svelte';
+    import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+	import 'bootstrap/dist/css/bootstrap.min.css';
+    import Navbar from "./components/navbar.svelte";
+    import BackG from "./components/BackG.svelte";
+    import BookCard from './components/BookCard.svelte';
+    import Login from "./components/Login.svelte";
 
+    let showModal = false;
+    function handleLoginEvent() {
+        showModal = true;
+        showModal = !!showModal;
+    }
     let books = [
         { title: 'Book 1',coverUrl: 'cover1.jpg' }
         ,
@@ -20,7 +26,8 @@
     ];
 </script>
 <main>
-<Navbar />
+<Navbar on:login = {handleLoginEvent}/>
+<Login show = {showModal} on:close = {showModal = false} />
 <BackG/>
 <div class = "heading">Browse The Catalogue here</div>
 <div class="container">
