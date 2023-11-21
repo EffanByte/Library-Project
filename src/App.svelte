@@ -8,14 +8,18 @@
     import Catalogue from './components/Catalogue.svelte';
     import Login from './components/Login.svelte';
     import BackG from './components/BackG.svelte';
+    import SignUp from './components/SignUp.svelte';
     const routes = {
         '/': Catalogue,
-        '/book/:id': BookDetail, //Dynamic route for books. Understand this later
+        '/book/:id': BookDetail, 
     };
-    let showModal = false;
+    let showLogin = false;
+    let showSignup = false;
     function handleLoginEvent() {
-        showModal = true;
-        showModal = !!showModal;
+        showLogin = true;   
+    }
+    function handleSignupEvent(){
+showSignup = true;
     }
     let books = [
         {id: 1, title: 'Book 1',coverUrl: 'cover1.jpg',}
@@ -25,8 +29,9 @@
 
 </script>
 <main>
-    <Navbar on:login = {handleLoginEvent}/>
+    <Navbar on:login = {handleLoginEvent} on:signup = {handleSignupEvent}/>
     <BackG />
-    <Login show = {showModal} on:close = {showModal = false} />
+    <Login show = {showLogin} on:close = {showLogin = false} />
+    <SignUp show = {showSignup} on:close = {showSignup = false} />
 <Router {routes}/>
 </main>

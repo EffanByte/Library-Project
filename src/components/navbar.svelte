@@ -3,8 +3,10 @@
 
     const dispatch = createEventDispatcher();
     function openLogin() {
-        console.log("Testing");
         dispatch('login');
+    }
+    function openSignup(){
+        dispatch('signup');
     }
 </script>
 
@@ -30,7 +32,7 @@
         <!-- Login and Signup Buttons -->
         <div class="d-flex">
             <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
-            <button class="btn btn-primary" type="button" style="margin-left: 10px;">Sign Up</button>
+            <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click = {openSignup}>Sign Up</button>
         </div>
     </div>
 </nav>

@@ -17,7 +17,8 @@
     .card {
         margin-top: 5vh;
         cursor: pointer; /* Optional: to show it's clickable */
-    }
+        border: 2px black solid;
+    }   
     a {
         text-decoration: none; /* Optional: to prevent default link styling */
         color: inherit; /* Optional: to maintain the color of the content */
