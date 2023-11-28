@@ -1,17 +1,29 @@
 <script>
     import { createEventDispatcher } from "svelte";
-
+    import {loggedIn, user} from './store.js';
     const dispatch = createEventDispatcher();
 
     export let show;
     let username = '';
     let password = '';
-    
-    function handleLogin() {
-        // Implement your login logic here
-        console.log(username, password);
-        close(); 
+        const VALID_USERNAME = 'user';
+        const VALID_PASSWORD = 'password';
+    function validateCredentials() {
+        return username == VALID_USERNAME && password == VALID_PASSWORD;
     }
+
+function handleLogin() {
+    if (validateCredentials()) { // Assuming this is a function call
+        loggedIn.set({ is: true }); // Updating store value
+
+        user.set({ username: username }); // Updating user store
+        close();    
+    } else {
+        alert("Invalid credentials"); // Show an error message
+    }
+    console.log(username, password);
+}
+
     function close(){
         show = false;
         dispatch('close');

@@ -1,12 +1,30 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-
+    import {user, loggedIn} from "./store.js";
     const dispatch = createEventDispatcher();
+    
+     let showDropdown = false;
+        function toggleDropdown() {
+            console.log(showDropdown);
+        showDropdown = !showDropdown;
+    }
+        function logout() {
+        loggedIn.set({is: false});
+        user.set({ username: '',});
+        showDropdown = false;
+    }
+        function goToProfile() {
+        // Navigate to the profile page
+        showDropdown = false;
+    }
     function openLogin() {
         dispatch('login');
     }
     function openSignup(){
         dispatch('signup');
+    }
+    function handleKeydown(){
+
     }
 </script>
 
@@ -28,11 +46,60 @@
                 <span class="nav-link"></span>
             </div>
         </div>
-
-        <!-- Login and Signup Buttons -->
-        <div class="d-flex">
-            <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
-            <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click = {openSignup}>Sign Up</button>
-        </div>
+{#if $loggedIn.is == true} <!-- Check if the user is logged in -->
+    <div class="user-area" style = "cursor: pointer"on:click={toggleDropdown}>
+        User Menu
+        {#if showDropdown} <!-- Dropdown toggle -->
+<div class = "dropdown-container" on:click = {toggleDropdown}>
+<div class="dropdown-item">Profile</div>
+<div class="dropdown-item" on:click = {logout}>Log Out</div>    
+</div>
+        {/if}
     </div>
+{:else}
+    <div class="d-flex">
+        <button class="btn btn-outline-primary" type="button" on:click = {openLogin}>Login</button>
+        <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click={openSignup}>Sign Up</button>
+    </div>
+{/if}
 </nav>
+
+<style>
+.dropdown-container {
+        position: relative; /* Required for absolute positioning of children */
+        cursor: pointer;
+        /* Additional styling */
+    }
+
+    .dropdown-menu {
+        display: none; /* Hide by default */
+        position: absolute;
+        right: 0; /* Align to the right side of .dropdown-container */
+        top: 100%; /* Position right below the navbar */
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        width: 200px; /* Or as needed */
+        z-index: 1000;
+    }
+
+    .dropdown-container:hover .dropdown-menu,
+    .dropdown-container:focus .dropdown-menu {
+        display: block; /* Show on hover or focus */
+    }
+
+    .dropdown-item {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f6f6f6;
+    }
+
+    /* Optional: Style to remove the bottom border for the last item */
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+    </style>
