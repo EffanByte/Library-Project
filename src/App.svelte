@@ -4,14 +4,16 @@
 	import 'bootstrap/dist/css/bootstrap.min.css';
     import Navbar from "./components/navbar.svelte";
     import BookDetail from './routes/BookDetail.svelte';
+    import LibrarianHome from './routes/LibrarianHome.svelte';
     import Router from 'svelte-spa-router';
     import Catalogue from './components/Catalogue.svelte';
     import Login from './components/Login.svelte';
     import BackG from './components/BackG.svelte';
-    import SignUp from './components/SignUp.svelte';
+    import SignUp from './components/Sign.svelte';
     const routes = {
         '/': Catalogue,
         '/book/:id': BookDetail, 
+        '/Librarian': LibrarianHome, 
     };
     let showLogin = false;
     let showSignup = false;

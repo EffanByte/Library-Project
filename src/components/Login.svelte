@@ -1,13 +1,15 @@
 <script>
     import { createEventDispatcher } from "svelte";
     import {loggedIn, user} from './store.js';
+    import {push} from 'svelte-spa-router';
     const dispatch = createEventDispatcher();
 
     export let show;
     let username = '';
     let password = '';
+    let isLibrarian = true;
         const VALID_USERNAME = 'user';
-        const VALID_PASSWORD = 'password';
+        const VALID_PASSWORD = 'pass';
     function validateCredentials() {
         return username == VALID_USERNAME && password == VALID_PASSWORD;
     }
@@ -18,6 +20,9 @@ function handleLogin() {
 
         user.set({ username: username }); // Updating user store
         close();    
+        if (isLibrarian == true){
+            push('/Librarian/');    
+        }
     } else {
         alert("Invalid credentials"); // Show an error message
     }

@@ -48,7 +48,7 @@
         </div>
 {#if $loggedIn.is == true} <!-- Check if the user is logged in -->
     <div class="user-area" style = "cursor: pointer"on:click={toggleDropdown}>
-        User Menu
+        Hello {$user.username}
         {#if showDropdown} <!-- Dropdown toggle -->
 <div class = "dropdown-container" on:click = {toggleDropdown}>
 <div class="dropdown-item">Profile</div>
