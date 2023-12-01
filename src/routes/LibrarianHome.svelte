@@ -1,5 +1,10 @@
 <script>
+    import { push, link } from 'svelte-spa-router';
+
     import ScrollBar from '../components/ScrollBar.svelte';
+    function goBookManagement(){
+        p
+    }
 </script>
 <ScrollBar></ScrollBar>
 
@@ -10,39 +15,39 @@
             <div class="card h-100">
                 <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Manange Books</h5>
+                    <p class="card-text flex-grow-1">Add, update or delete books.</p>
+                    <a href={`/Librarian/BookManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Click Here</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Rental Management</h5>
+                    <p class="card-text flex-grow-1">Brief description of the feature.</p>
+                    <a href={`/Librarian/RentManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Feature Title</h5>
                     <p class="card-text flex-grow-1">Brief description of the feature.</p>
-                    <a href="#" class="btn btn-primary mt-2 align-self-start">Learn More</a>
+                    <a href={`/Librarian/RoomManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Learn More</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <img src="path/to/user-management-image.jpg" class="card-img-top" alt="User Management">
-                <div class="card-body">
-                    <h5 class="card-title">User Management</h5>
-                    <p class="card-text">Manage user accounts, permissions, and data.</p>
-                    <a href="#" class="btn btn-primary">Manage Users</a>
-                </div>
-            </div>
-        </div>
-                <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <img src="path/to/loan-management-image.jpg" class="card-img-top" alt="Loan Management">
-                <div class="card-body">
-                    <h5 class="card-title">Loan Management</h5>
-                    <p class="card-text">Track and manage book loans and returns.</p>
-                    <a href="#" class="btn btn-primary">Manage Loans</a>
-                </div>
-            </div>
-        </div>
-                <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card">
-                <img src="path/to/room-reservation-image.jpg" class="card-img-top" alt="Room Reservation System">
-                <div class="card-body">
-                    <h5 class="card-title">Room Reservation System</h5>
-                    <p class="card-text">Manage reservations for study rooms and spaces.</p>
-                    <a href="#" class="btn btn-primary">Manage Reservations</a>
+        <div class="col-sm-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Feature Title</h5>
+                    <p class="card-text flex-grow-1">Brief description of the feature.</p>
+                    <a href={`/Librarian/UserManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
                 </div>
             </div>
         </div>
@@ -53,6 +58,7 @@
 <style>
     .dashboard {
         padding-bottom: 30px; /* Adds space at the bottom of the container */
+        padding-top: 30px;  
     }
 
     .card {

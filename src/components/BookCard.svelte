@@ -4,7 +4,7 @@
 </script>
 
 <!-- Assuming each book object has a unique identifier `id` -->
-<a use:link href={`/book/${book.id}`}>
+    <a use:link href={`/book/${book.id}`}>
     <div class="card" style="width: 18rem;">
         <img src={book.coverUrl} class="card-img-top" alt={`Cover of ${book.title}`} />
         <div class="card-body">

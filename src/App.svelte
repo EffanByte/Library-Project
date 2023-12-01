@@ -10,10 +10,18 @@
     import Login from './components/Login.svelte';
     import BackG from './components/BackG.svelte';
     import SignUp from './components/Sign.svelte';
+    import UserManage from './routes/UserManage.svelte';
+    import BookManage from './routes/BookManage.svelte';
+    import RentManage from './routes/RentManage.svelte';
+    import RoomManage from './routes/RoomManage.svelte'
     const routes = {
         '/': Catalogue,
         '/book/:id': BookDetail, 
         '/Librarian': LibrarianHome, 
+        '/Librarian/BookManagement': BookManage,
+        '/Librarian/UserManagement': UserManage,
+        '/Librarian/RoomManagement': RoomManage,
+        '/Librarian/RentManagement': RentManage,
     };
     let showLogin = false;
     let showSignup = false;
