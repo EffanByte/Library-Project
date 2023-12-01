@@ -3,7 +3,7 @@
 
     import ScrollBar from '../components/ScrollBar.svelte';
     function goBookManagement(){
-        p
+        
     }
 </script>
 <ScrollBar></ScrollBar>
@@ -13,9 +13,9 @@
         <!-- Repeat this structure for each card -->
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <img src="BookMNG.webp" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Manange Books</h5>
+                    <h5 class="card-title">Manage Books</h5>
                     <p class="card-text flex-grow-1">Add, update or delete books.</p>
                     <a href={`/Librarian/BookManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Click Here</a>
                 </div>
@@ -23,7 +23,7 @@
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <img src="RentMNG.png" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Rental Management</h5>
                     <p class="card-text flex-grow-1">Brief description of the feature.</p>
@@ -33,9 +33,9 @@
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <img src="UserMNG.jpg" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Feature Title</h5>
+                    <h5 class="card-title">User Management</h5>
                     <p class="card-text flex-grow-1">Brief description of the feature.</p>
                     <a href={`/Librarian/RoomManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Learn More</a>
                 </div>
@@ -43,9 +43,9 @@
         </div>
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
-                <img src="path/to/image.jpg" class="card-img-top" alt="Feature">
+                <img src="RoomMNG.jpg" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Feature Title</h5>
+                    <h5 class="card-title">Room Management</h5>
                     <p class="card-text flex-grow-1">Brief description of the feature.</p>
                     <a href={`/Librarian/UserManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
                 </div>

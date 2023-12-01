@@ -1,26 +1,55 @@
 <script>
-    import { link } from 'svelte-spa-router';
+    import { push } from 'svelte-spa-router';
     export let book; // Receiving book data as a prop
+    function navigateToBook(bookId) {
+        push(`/book/${bookId}`);
+    }
 </script>
 
-<!-- Assuming each book object has a unique identifier `id` -->
-    <a use:link href={`/book/${book.id}`}>
-    <div class="card" style="width: 18rem;">
-        <img src={book.coverUrl} class="card-img-top" alt={`Cover of ${book.title}`} />
-        <div class="card-body">
-            <h5 class="card-title">{book.title}</h5>
+<div class="system">
+        <div class="bookslider-img" style="background: url({book.coverUrl});">
         </div>
+    <div class="blookslider-data">
+            <h5 class = "Card-title">{book.title}</h5>
+            <p>By: {book.author}</p>
+            <button class="btn btn-primary" on:click={() => navigateToBook(book.id)}>Go to Book</button>
+        </div>
+        
     </div>
-</a>
 
 <style>
-    .card {
-        margin-top: 5vh;
-        cursor: pointer; /* Optional: to show it's clickable */
-        border: 2px black solid;
-    }   
     a {
         text-decoration: none; /* Optional: to prevent default link styling */
         color: inherit; /* Optional: to maintain the color of the content */
     }
+.system{
+        width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius:5px;
+    padding: 7px;
+}
+     .system:hover{
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.25);
+  -webkit-transform: all .3s ease-in-out;
+  -ms-transform: all .3s ease-in-out;
+  transform: all .3s ease-in-out;
+  position: relative;
+}   
+.blookslider-data{
+  width: 65%;
+  padding-left: 10px;   
+}
+
+.bookslider-img{
+  width: 130px;
+  height: 200px;
+  background-position: center center;
+  
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+
+}
 </style>

@@ -1,0 +1,52 @@
+    <script>
+        import {link} from 'svelte-spa-router';
+    </script>
+    
+    
+    <!-- Page Content-->
+        <section class="pt-4" style = "padding: 50px">
+            <div class="container px-lg-5">
+                <!-- Page Features-->
+                <div class="row gx-lg-5">
+                    <div class="col-lg-6 col-xxl-4 mb-5">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-collection"></i></div>
+                                <h2 class="fs-4 fw-bold">Fresh new layout</h2>
+                                <p class="mb-0">With Bootstrap 5, we've created a fresh new layout for this template!</p>
+                                                    <a href={`/Librarian/BookManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Click Here</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xxl-4 mb-5">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-cloud-download"></i></div>
+                                <h2 class="fs-4 fw-bold">Free to download</h2>
+                                <p class="mb-0">As always, Start Bootstrap has a powerful collectin of free templates.</p>
+                                                    <a href={`/Librarian/RentManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xxl-4 mb-5">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-card-heading"></i></div>
+                                <h2 class="fs-4 fw-bold">Jumbotron hero header</h2>
+                                <p class="mb-0">The heroic part of this template is the jumbotron hero header!</p>
+                                       <a href={`/Librarian/RoomManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-xxl-4 mb-5">
+                        <div class="card bg-light border-0 h-100">
+                            <div class="card-body text-center p-4 p-lg-5 pt-0 pt-lg-0">
+                                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-4 mt-n4"><i class="bi bi-bootstrap"></i></div>
+                                <h2 class="fs-4 fw-bold">Feature boxes</h2>
+                                <p class="mb-0">We've created some custom feature boxes using Bootstrap icons!</p>
+                                                    <a href={`/Librarian/UserManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </section>

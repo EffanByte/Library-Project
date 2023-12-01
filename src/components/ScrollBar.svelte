@@ -21,11 +21,12 @@
 <div class="container-fluid mt-4 px-4">
     <div class="d-flex flex-row flex-nowrap overflow-auto scrollbar">
         {#each items as item}
-            <div class="card card-item shadow-sm">
-                <img src={item.cover} class="card-img-top" alt={`Cover of ${item.text}`}>
-                <div class="card-body">
-                    <p class="card-text">Some description or detail about the item.</p>
-                    <!-- Add more content or buttons if needed -->
+             <div class="col-md-4 mb-3">
+                <div class="card">
+                <img class="img-fluid" alt="100%x280" src="{item.cover}">
+                    <div class="card-body">
+                        <h4 class="card-title">News text Here</h4>
+                    </div>
                 </div>
             </div>
         {/each}

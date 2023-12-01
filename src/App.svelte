@@ -14,6 +14,7 @@
     import BookManage from './routes/BookManage.svelte';
     import RentManage from './routes/RentManage.svelte';
     import RoomManage from './routes/RoomManage.svelte'
+    import HomeTest from './routes/Hometest.svelte';
     const routes = {
         '/': Catalogue,
         '/book/:id': BookDetail, 
