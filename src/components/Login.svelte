@@ -91,4 +91,7 @@ function handleLogin() {
         background-color: #000;
         opacity: .5;
     }
+    button {
+        margin-top: 10px;
+    }
 </style>

@@ -13,9 +13,10 @@
     import UserManage from './routes/UserManage.svelte';
     import BookManage from './routes/BookManage.svelte';
     import RentManage from './routes/RentManage.svelte';
-    import RoomManage from './routes/RoomManage.svelte'
-    import HomeTest from './routes/Hometest.svelte';
+    import RoomManage from './routes/RoomManage.svelte';
+    import Profile from './routes/Profile.svelte';
     const routes = {
+
         '/': Catalogue,
         '/book/:id': BookDetail, 
         '/Librarian': LibrarianHome, 
@@ -23,6 +24,7 @@
         '/Librarian/UserManagement': UserManage,
         '/Librarian/RoomManagement': RoomManage,
         '/Librarian/RentManagement': RentManage,
+        '/User/:user': Profile
     };
     let showLogin = false;
     let showSignup = false;
