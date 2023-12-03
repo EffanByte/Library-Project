@@ -2,14 +2,23 @@
     import BookCard from "./BookCard.svelte";
 console.log("test");
     let showModal = false;
+    let books = [];
     function handleLoginEvent() {
         showModal = true;
         showModal = !!showModal;
     }
-    let books = [
-    { id: 1, title: 'Book 1', coverUrl: 'testcover.jpeg'},
-    { id: 2, title: 'Book 2', coverUrl: 'testcover.jpeg'}
-];
+// Function to load books from the Flask API
+async function loadBooks() {
+        const response = await fetch('http://localhost:8000/api/books');
+        if (response.ok) {
+            books = await response.json();
+            console.log(books);
+        } else {
+            console.error('Failed to load books');
+        }
+    }
+    // calling function
+    loadBooks();
 
 </script>
 

@@ -4,5 +4,5 @@
 </script>
 
 {#each books as book}
-    <a use:link href={`/book/${book.id}`}>{book.title}</a>
+    <a use:link href={`/book/${book.BookID}`}>{book.Title}</a>
 {/each}

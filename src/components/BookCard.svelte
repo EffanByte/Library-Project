@@ -1,8 +1,8 @@
 <script>
     import { push } from 'svelte-spa-router';
     export let book; // Receiving book data as a prop
-    function navigateToBook(bookId) {
-        push(`/book/${bookId}`);
+    function navigateToBook(BookID) {
+        push(`/book/${BookID}`);
     }
 </script>
 
@@ -10,9 +10,9 @@
         <div class="bookslider-img" style="background: url({book.coverUrl});">
         </div>
     <div class="blookslider-data">
-            <h5 class = "Card-title">{book.title}</h5>
-            <p>By: {book.author}</p>
-            <button class="btn btn-primary" on:click={() => navigateToBook(book.id)}>Go to Book</button>
+            <h5 class = "Card-title">{book.Title}</h5>
+            <p>By: {book.Author}</p>
+            <button class="btn btn-primary" on:click={() => navigateToBook(book.BookID)}>Go to Book</button>
         </div>
         
     </div>
