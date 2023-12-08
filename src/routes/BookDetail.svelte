@@ -2,6 +2,9 @@
 
 <script>
     import { onMount } from 'svelte';
+    import { push, params,  } from 'svelte-spa-router';
+    import axios from 'axios';  // assuming axios is installed, otherwise use fetch
+    import { selectedBookID } from '/Users/hamzariaz/VSCODE/Virtual Library Project/Library-Project/src/components/store.js'; //TEMPORARY
 
     let renting = false;
     let selectedDuration = '';
@@ -10,14 +13,24 @@
     let book = null;
     let delay=''
     
+    let bookID;
+selectedBookID.subscribe(value => {
+    bookID = value;
+    if (bookID) {
+        getBookDetails(bookID);
+    }
+});
 
-    // Simulating book data retrieval using onMount
     onMount(async () => {
-        // Fetch or compute book details here using bookId
-        // For example, you might have a function getBookDetails(id)
-        const bookId = 123; // Replace this with actual book ID or parameter
-;        book = await getBookDetails(bookId);
+       // console.log("hello")
+        const bookID = $params.bookID; // get the book ID from the URL params
+       /* console.log('Book ID:', bookID)
+        if (bookID)
+        {   
+            await getBookDetails(bookID);
+        }  */  
     });
+
 
     function rentBook() {
         renting = true;
@@ -27,16 +40,16 @@
         selectedDuration = event.target.value;
         // Calculate rent amount and fine message based on the selected duration
         // This is a placeholder, replace with actual calculation logic
-        if (selectedDuration === 'one week') {
+        if (selectedDuration === '1 week') {
             rentAmount = 5;
             fineMessage = 'Fine: $10 if late.';
-        } else if (selectedDuration === 'two weeks') {
+        } else if (selectedDuration === '2 weeks') {
             rentAmount = 30;
             fineMessage = 'Fine: $30 if late.';
-        } else if (selectedDuration === 'one month') {
+        } else if (selectedDuration === '1 month') {
             rentAmount = 50;
             fineMessage = 'Fine: $50 if late.';
-        } else if (selectedDuration === 'three months') {
+        } else if (selectedDuration === '3 months') {
             rentAmount = 100;
             fineMessage = 'Fine: $100 if late.';
         }
@@ -65,34 +78,37 @@
         fineMessage = '';
     }
 
+
     async function getBookDetails(id) {
-        // Simulating book details retrieval from an API
-        // Replace this with actual API fetch logic
-        return {
-            title: "Testing",
-            author: "Effan pro",
-            rating: 5,
-            description: "Effan's code works",
-            coverUrl: "testcover.jpeg"
-        };
+        try {
+            const response = await axios.get(`http://localhost:8000/api/books/${id}`);
+            book = response.data;
+        } catch (error) {
+            console.error('Error fetching book details:', error);
+            // Handle error, e.g., show a message or redirect
+        }
     }
+    
 </script>
+
+
 
 <main>
     <!-- Book details section -->
     {#if book}
         <div class="contB">
             <div class="cont1">
-                <img src={book.coverUrl} alt="Cover of ${book.title}" class="book-cover" />
+                <img src={`data:image/jpeg;base64,${book.coverImage}`} alt={`Cover of ${book.Title}`} class="book-cover" />
+
                 <div class="book-info">
-                    <h2>{book.title}</h2>
-                    <p>Author: {book.author}</p>
-                    <p>Rating: {book.rating}</p>
+                    <h2>{book.Title}</h2>
+                    <p>Author: {book.Author}</p>
+                    <p>Rating: {9.5}</p>
                 </div>
             </div>
             <div class="book-description">
                 <h3>Description</h3>
-                <p>{book.description}</p>
+                <p>{book.Description}</p>
             </div>
             <button class="btn btn-primary" on:click={rentBook}>Rent Book</button>
         </div>

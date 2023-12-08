@@ -1,14 +1,18 @@
 <script>
     import { push } from 'svelte-spa-router';
+    import { selectedBookID } from '/Users/hamzariaz/VSCODE/Virtual Library Project/Library-Project/src/components/store.js'; // TEMPORARY
     export let book; // Receiving book data as a prop
-    function navigateToBook(BookID) {
-        push(`/book/${BookID}`);
+    function navigateToBook(bookID) {
+        push(`/book/${bookID}`);
+        selectedBookID.set(bookID); // TEMPORARY WORKAROUND TO MAKE BookDetail.svelte work
     }
 </script>
 
 <div class="system">
-        <div class="bookslider-img" style="background: url({book.coverUrl});">
+        <!--<div class="bookslider-img" style="background: url({book.coverImage});">-->
+        <div class="bookslider-img" style="background-image: url('data:image/jpeg;base64,{book.coverImage}');">
         </div>
+                  
     <div class="blookslider-data">
             <h5 class = "Card-title">{book.Title}</h5>
             <p>By: {book.Author}</p>
