@@ -4,8 +4,8 @@
     import { onMount } from 'svelte';
     import { push, params,  } from 'svelte-spa-router';
     import axios from 'axios';  // assuming axios is installed, otherwise use fetch
-    import { selectedBookID } from '/Users/hamzariaz/VSCODE/Virtual Library Project/Library-Project/src/components/store.js'; //TEMPORARY
-
+    import { selectedBookID, user, loggedIn } from '../components/store.js';
+    import Login from '../components/Login.svelte';
     let renting = false;
     let selectedDuration = '';
     let rentAmount = 0;
@@ -31,9 +31,16 @@ selectedBookID.subscribe(value => {
         }  */  
     });
 
+    function viewPDF(){
+push(`/PDF/${bookID}`);
+    }
 
     function rentBook() {
+        if ($loggedIn.is == true){
         renting = true;
+        }
+        else
+        alert("Please log in to borrow a book");
     }
 
     function handleDurationSelection(event) {
@@ -110,7 +117,11 @@ selectedBookID.subscribe(value => {
                 <h3>Description</h3>
                 <p>{book.Description}</p>
             </div>
+            {#if `${book.TypeID}` == 1}
             <button class="btn btn-primary" on:click={rentBook}>Rent Book</button>
+            {:else if `${book.TypeID}` == 2}
+            <button class = "btn btn-secondary" on:click = {viewPDF}>View PDF</button>
+            {/if}
         </div>
     {:else}
         <p>Loading...</p>

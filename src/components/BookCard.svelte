@@ -1,6 +1,6 @@
 <script>
     import { push } from 'svelte-spa-router';
-    import { selectedBookID } from '/Users/hamzariaz/VSCODE/Virtual Library Project/Library-Project/src/components/store.js'; // TEMPORARY
+    import { selectedBookID } from '../components/store.js';
     export let book; // Receiving book data as a prop
     function navigateToBook(bookID) {
         push(`/book/${bookID}`);

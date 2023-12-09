@@ -1,6 +1,7 @@
 <script>
     import { createEventDispatcher } from 'svelte';
     import {user, loggedIn} from "./store.js";
+    import { push } from 'svelte-spa-router';
     const dispatch = createEventDispatcher();
     
      let showDropdown = false;
@@ -14,7 +15,8 @@
         showDropdown = false;
     }
         function goToProfile() {
-        // Navigate to the profile page
+            console.log($user.username);
+        push(`/user/${user.username}`);
         showDropdown = false;
     }
     function openLogin() {

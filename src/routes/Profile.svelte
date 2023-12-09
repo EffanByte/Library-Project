@@ -22,20 +22,11 @@
 
 <div class="container my-4">
     <div class="text-center">
-        <img src="/path/to/default-profile-icon.png" alt="User Profile" class="rounded-circle" style="width: 150px; height: 150px;">
         <h3>{userName}</h3>
     </div>
-
-    <h4 class="mt-4">Books I've Read</h4>
-    <div class="d-flex flex-wrap">
-        {#each booksRead as book}
-            <div class="card m-2" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title">{book}</h5>
-                </div>
-            </div>
-        {/each}
-    </div>
+    <h4 class="mt-4">About Me</h4>
+    <p>CMS ID: {cmsId}</p>
+    <p>Email: {userEmail}</p>
 
     <h4 class="mt-4">Currently Rented/Bought Books</h4>
     <ul class="list-group">
@@ -50,8 +41,4 @@
     <div class="alert alert-info mt-4" role="alert">
         Late Fees: {lateFees}
     </div>
-
-    <h4 class="mt-4">About Me</h4>
-    <p>CMS ID: {cmsId}</p>
-    <p>Email: {userEmail}</p>
 </div>

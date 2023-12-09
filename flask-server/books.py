@@ -1,5 +1,4 @@
 import mysql.connector
-import requests
 import base64
 # API KEY for Google Books API here
 #api_key = "AIzaSyC0duRJFDy8vZLT8-rnXqa6JawDxT8t-tQ"
@@ -8,7 +7,7 @@ def get_db_connection():
     return mysql.connector.connect(
         host='localhost',
         user='root',
-        password='',
+        password='',   
         database='virtual_library'
     )
 

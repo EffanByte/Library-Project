@@ -2,9 +2,7 @@
     import { push, link } from 'svelte-spa-router';
 
     import ScrollBar from '../components/ScrollBar.svelte';
-    function goBookManagement(){
-        
-    }
+
 </script>
 <ScrollBar></ScrollBar>
 

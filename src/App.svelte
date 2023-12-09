@@ -17,6 +17,7 @@
     import RentManage from './routes/RentManage.svelte';
     import RoomManage from './routes/RoomManage.svelte';
     import Profile from './routes/Profile.svelte';
+    import BookPDF from './routes/BookPDF.svelte';
 
     const routes = {
 
@@ -27,7 +28,8 @@
         '/Librarian/UserManagement': UserManage,
         '/Librarian/RoomManagement': RoomManage,
         '/Librarian/RentManagement': RentManage,
-        '/User/:user': Profile
+        '/User/:user': Profile,
+        '/PDF/:typeID': BookPDF
     };
     let showLogin = false;
     let showSignup = false;
