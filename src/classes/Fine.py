@@ -1,5 +1,3 @@
-import mysql.connector
-
 class Fine:
     def __init__(self, fine_id, fine_applicable, db_connection):
         self.fine_id = fine_id
@@ -7,7 +5,8 @@ class Fine:
         self.db_connection = db_connection
 
     def apply_fine(self, qalam_id, fine_applicable):
-        query = "INSERT INTO Fine (FineApplicable) VALUES (%s)"
-        values = (fine_applicable,)
-        self.db_connection.cursor.execute(query, values)
+        call_proc = "CALL ApplyFine(%s, %s)"
+        values = (qalam_id, fine_applicable)
+        self.db_connection.cursor.execute(call_proc, values)
         self.db_connection.conn.commit()
+
