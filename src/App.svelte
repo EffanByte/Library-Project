@@ -1,3 +1,5 @@
+
+
 <script>
 
     import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -15,10 +17,11 @@
     import RentManage from './routes/RentManage.svelte';
     import RoomManage from './routes/RoomManage.svelte';
     import Profile from './routes/Profile.svelte';
+
     const routes = {
 
         '/': Catalogue,
-        '/book/:id': BookDetail, 
+        '/book/:bookID': BookDetail,
         '/Librarian': LibrarianHome, 
         '/Librarian/BookManagement': BookManage,
         '/Librarian/UserManagement': UserManage,
