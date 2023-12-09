@@ -9,7 +9,16 @@ class ActionReport:
         self.db_connection = db_connection
 
     def generate_action_report(self, librarian_id, action_description, time_of_action):
-        query = "INSERT INTO ActionReport (LibrarianID, ActionDescription, TimeOfAction) VALUES (%s, %s, %s)"
+        call_proc = "CALL GenerateActionReport(%s, %s, %s)"
         values = (librarian_id, action_description, time_of_action)
-        self.db_connection.cursor.execute(query, values)
+        self.db_connection.cursor.execute(call_proc, values)
         self.db_connection.conn.commit()
+
+
+
+
+# Example Usage:
+# Replace the database connection details with your actual database credentials
+# db = mysql.connector.connect(host='your_host', user='your_user', password='your_password', database='your_database')
+# action_report = ActionReport(action_id=1, librarian_id=1, action_description='Performed action', time_of_action='2023-12-09', db_connection=db)
+# action_report.generate_action_report(librarian_id=action_report.librarian_id, action_description='Performed another action', time_of_action='2023-12-09')

@@ -1,35 +1,48 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import {loggedIn, user} from './store.js';
-    import {push} from 'svelte-spa-router';
+    import { loggedIn, user } from './store.js';
+    import { push } from 'svelte-spa-router';
+    import axios from 'axios';
+
     const dispatch = createEventDispatcher();
 
     export let show;
-    let username = '';
-    let password = '';
+    let Email = '';
+    let Name = '';
+    let Password = '';
     let isLibrarian = true;
-        const VALID_USERNAME = 'user';
-        const VALID_PASSWORD = 'pass';
-    function validateCredentials() {
-        return username == VALID_USERNAME && password == VALID_PASSWORD;
-    }
 
-function handleLogin() {
-    if (validateCredentials()) { // Assuming this is a function call
-        loggedIn.set({ is: true }); // Updating store value
+    async function handleLogin() {
+        try {
+            const response = await axios.post('http://localhost:8000/api/login', {
+                Email,
+                Name,
+                Password
+            });
 
-        user.set({ username: username }); // Updating user store
-        close();    
-        if (isLibrarian == true){
-            push('/Librarian/');    
+            if (response.status === 200) {
+                // Assuming the backend response contains the user and a flag for librarian status
+                loggedIn.set({ is: true }); // Updating store value
+                user.set({ username: response.data.name }); // Updating user store
+
+                close();
+
+                if (response.data.isLibrarian) {
+                    push('/Librarian/');
+                } else {
+                    //push('/User'); // Redirect to a different page for non-librarians
+                    push('/Librarian/'); // redirecting to librarian page by default temporarily
+                }
+            } else {
+                alert("Invalid credentials");
+            }
+        } catch (error) {
+            console.error("Login error:", error.response?.data || error.message);
+            alert("Login failed. Please try again.");
         }
-    } else {
-        alert("Invalid credentials"); // Show an error message
     }
-    console.log(username, password);
-}
 
-    function close(){
+    function close() {
         show = false;
         dispatch('close');
     }
@@ -48,12 +61,12 @@ function handleLogin() {
             <div class="modal-body">
                 <form on:submit|preventDefault={handleLogin}>
                     <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" bind:value={username}>
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control" id="email" bind:value={Email}>
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" bind:value={password}>
+                        <input type="password" class="form-control" id="password" bind:value={Password}>
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
