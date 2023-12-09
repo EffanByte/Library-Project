@@ -1,5 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte';
+    import axios from 'axios';
 
     export let show;
     const dispatch = createEventDispatcher();
@@ -10,14 +11,29 @@
     let confirmPassword = '';
     let userId = '';
 
-    function handleSignUp() {
-        // Implement your sign-up logic here
+    async function handleSignUp() {
         if (password !== confirmPassword) {
             alert("Passwords do not match");
             return;
         }
+        
+        try {
+            const response = await axios.post('http://localhost:8000/api/signup', {
+                Name: name,
+                Email: email,
+                Password: password,
+                QalamID: userId
+            });
 
-        console.log("Signing up:", { name, email, password });
+            if (response.status === 200) {
+                console.log("Signed up successfully:", response.data);
+                // Handle successful sign up, e.g., redirect to login or dashboard
+            }
+        } catch (error) {
+            console.error("Sign up error:", error.response?.data || error.message);
+            // Handle error, e.g., show an error message to the user
+        }
+
         close();
     }
 
