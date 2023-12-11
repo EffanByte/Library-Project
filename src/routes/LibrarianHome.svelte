@@ -1,5 +1,5 @@
 <script>
-    import { push, link } from 'svelte-spa-router';
+    import { link } from 'svelte-spa-router';
 
     import ScrollBar from '../components/ScrollBar.svelte';
 
@@ -23,8 +23,8 @@
             <div class="card h-100">
                 <img src="RentMNG.png" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Rental Management</h5>
-                    <p class="card-text flex-grow-1">Brief description of the feature.</p>
+                    <h5 class="card-title">Issued Books Management</h5>
+                    <p class="card-text flex-grow-1">Check the status of all the issued books.</p>
                     <a href={`/Librarian/RentManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
                 </div>
             </div>
