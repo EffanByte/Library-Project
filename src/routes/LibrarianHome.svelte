@@ -6,8 +6,7 @@
 </script>
 <ScrollBar></ScrollBar>
 
-<div class="container mt-4 dashboard">
-    <div class="row">
+    <div class="row justify-content-center mt-5 mx-auto col-10">
         <!-- Repeat this structure for each card -->
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
@@ -51,13 +50,8 @@
         </div>
 
     </div>
-</div>
 
 <style>
-    .dashboard {
-        padding-bottom: 30px; /* Adds space at the bottom of the container */
-        padding-top: 30px;  
-    }
 
     .card {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */

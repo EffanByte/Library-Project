@@ -25,8 +25,7 @@
     function openSignup(){
         dispatch('signup');
     }
-    function handleKeydown(){
-    }
+
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -48,11 +47,15 @@
             </div>
         </div>
 {#if $loggedIn.is == true} <!-- Check if the user is logged in -->
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
     <div class="user-area" style = "cursor: pointer"on:click={toggleDropdown}>
         Hello, {$user.username}!
         {#if showDropdown} <!-- Dropdown toggle -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class = "dropdown-container" on:click = {toggleDropdown}>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="dropdown-item" on:click={goToProfile}>Profile</div>
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class="dropdown-item" on:click = {logout}>Log Out</div>    
 </div>
         {/if}
@@ -72,31 +75,24 @@
         /* Additional styling */
     }
 
-    .dropdown-menu {
-        display: none; /* Hide by default */
+    .dropdown-container {
         position: absolute;
-        right: 0; /* Align to the right side of .dropdown-container */
-        top: 100%; /* Position right below the navbar */
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        width: 200px; /* Or as needed */
-        z-index: 1000;
-    }
-
-    .dropdown-container:hover .dropdown-menu,
-    .dropdown-container:focus .dropdown-menu {
-        display: block; /* Show on hover or focus */
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
     }
 
     .dropdown-item {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        color: black;
     }
 
     .dropdown-item:hover {
-        background-color: #f6f6f6;
+        background-color: #f1f1f1;
     }
 
     /* Optional: Style to remove the bottom border for the last item */

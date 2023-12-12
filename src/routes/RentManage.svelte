@@ -24,15 +24,11 @@
     let selectedOption = 'Time'; // Default selection
     let parameter = ''; // Variable to store textarea input
 
-    // Function to handle dropdown change
-    function handleDropdownChange(event) {
-        selectedOption = event.target.value;
+    function extendDueDate(bookID) {
+        console.log('Extending due date:', bookID);
+        // Add logic to handle the due date extension
     }
-
-    // Function to handle textarea input
-    function handleTextareaChange(event) {
-        parameter = event.target.value;
-    }
+    
     function returnBook(bookID) {
         console.log('Returning book:', bookID);
         // Add logic to handle the book return
@@ -59,7 +55,9 @@
                         <td>{book.name}</td>
                         <td>{book.issuedBy}</td>
                         <td>{book.dueDate}</td>
-                        <td><button on:click={() => returnBook(book.bookID)}>Return Book</button></td>
+                        <td><button on:click={() => returnBook(book.bookID)}>Return Book</button>
+                            <button on:click= {() => extendDueDate(book.bookID)}>Extend Due Date</button>
+                        </td>
                     </tr>
                 {/each}
             </tbody>
