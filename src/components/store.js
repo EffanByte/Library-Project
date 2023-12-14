@@ -7,3 +7,4 @@ export const user = writable({username: ''} );
 // Creating a writable store book chosen when going from BookCard.Svelte -> BookDetail.svelte (TEPORARY WORKAROUND)
 export const selectedBookID = writable(null);
 export const isLibrarian = writable({ is: true });
+export const backgroundColor = writable('black');
