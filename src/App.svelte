@@ -18,10 +18,13 @@
     import RoomManage from './routes/RoomManage.svelte';
     import Profile from './routes/Profile.svelte';
     import BookPDF from './routes/BookPDF.svelte';
-
+    import Home from './routes/Home.svelte'
+    import Complaint from './components/Complaint.svelte';
+    import RoomUser from './components/Room.svelte'
+    import LostFound from './components/LostFound.svelte';
     const routes = {
 
-        '/': Catalogue,
+        '/': Home,
         '/book/:bookID': BookDetail,
         '/Librarian': LibrarianHome, 
         '/Librarian/BookManagement': BookManage,
@@ -29,7 +32,12 @@
         '/Librarian/RoomManagement': RoomManage,
         '/Librarian/RentManagement': RentManage,
         '/User/:user': Profile,
-        '/PDF/:typeID': BookPDF
+        '/PDF/:typeID': BookPDF,
+        '/UserHome/:user': Home,
+        '/Catalogue': Catalogue,
+        '/Complaint': Complaint,
+        '/Room': RoomUser,
+        '/LostFound': LostFound
     };
     let showLogin = false;
     let showSignup = false;

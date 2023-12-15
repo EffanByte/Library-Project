@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import { loggedIn, user } from './store.js';
+    import { loggedIn, user, isLibrarian } from './store.js';
     import { push } from 'svelte-spa-router';
     import axios from 'axios';
 
@@ -10,7 +10,6 @@
     let Email = '';
     let Name = '';
     let Password = '';
-    let isLibrarian = true;
 
     async function handleLogin() {
         try {

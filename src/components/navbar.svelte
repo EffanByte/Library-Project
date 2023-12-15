@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {user, loggedIn} from "./store.js";
+    import {user, loggedIn, isLibrarian} from "./store.js";
     import { push } from 'svelte-spa-router';
     const dispatch = createEventDispatcher();
     
@@ -25,44 +25,46 @@
     function openSignup(){
         dispatch('signup');
     }
-    function handleKeydown(){
+    function goToLibrary(){
+        push('/Librarian/');
     }
+
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <!-- Logo -->
-        <a class="navbar-brand" href="/#/">
-            Library Management
-        </a>
-
-        <!-- Toggler for Mobile View -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <!-- Tagline -->
-            <div class="navbar-nav">
-                <span class="nav-link"></span>
-            </div>
-        </div>
-{#if $loggedIn.is == true} <!-- Check if the user is logged in -->
-    <div class="user-area" style = "cursor: pointer"on:click={toggleDropdown}>
+  <div class="container-fluid">
+    <!-- Logo -->
+    <a class="navbar-brand"     href="/#/">
+      Library Management
+    </a>
+{#if $isLibrarian.is == true}
+    <div class="navbar-center">
+      <button class="btn btn-primary" on:click={goToLibrary}>Go to Library</button>
+    </div>
+    {/if}
+    {#if $loggedIn.is == true}
+      <!-- Check if the user is logged in -->
+      <div class="user-area" style="cursor: pointer" on:click={toggleDropdown}>
+        
         Hello, {$user.username}!
-        {#if showDropdown} <!-- Dropdown toggle -->
-<div class = "dropdown-container" on:click = {toggleDropdown}>
-<div class="dropdown-item" on:click={goToProfile}>Profile</div>
-<div class="dropdown-item" on:click = {logout}>Log Out</div>    
-</div>
+        {#if showDropdown}
+          <!-- Dropdown toggle -->
+          <div class="dropdown-container" on:click={toggleDropdown}>
+            <div class="dropdown-item" on:click={goToProfile}>Profile</div>
+            <div class="dropdown-item" on:click={logout}>Log Out</div>
+          </div>
         {/if}
-    </div>
-{:else}
-    <div class="d-flex">
-        <button class="btn btn-outline-primary" type="button" on:click = {openLogin}>Login</button>
+      </div>
+    {:else}
+      <div class="d-flex">
+        <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
         <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click={openSignup}>Sign Up</button>
-    </div>
-{/if}
+      </div>
+    {/if}
+
+    <!-- New navbar element -->
+
+  </div>
 </nav>
 
 <style>
@@ -72,31 +74,24 @@
         /* Additional styling */
     }
 
-    .dropdown-menu {
-        display: none; /* Hide by default */
+    .dropdown-container {
         position: absolute;
-        right: 0; /* Align to the right side of .dropdown-container */
-        top: 100%; /* Position right below the navbar */
-        background-color: white;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        width: 200px; /* Or as needed */
-        z-index: 1000;
-    }
-
-    .dropdown-container:hover .dropdown-menu,
-    .dropdown-container:focus .dropdown-menu {
-        display: block; /* Show on hover or focus */
+        right: 0;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
     }
 
     .dropdown-item {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        color: black;
     }
 
-    .dropdown-item:hover {
-        background-color: #f6f6f6;
+    .dropdown-item:hover {  
+        background-color: #f1f1f1;
     }
 
     /* Optional: Style to remove the bottom border for the last item */
