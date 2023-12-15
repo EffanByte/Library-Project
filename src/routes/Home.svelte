@@ -100,13 +100,4 @@ function gotoComplaint(){
         transform: scale(1.05);
     }
 
-    .custom-horizontal-container {
-    width: 100%; /* Full width of the parent element */
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
-    aspect-ratio: 16 / 9; /* Example aspect ratio for horizontal layout */
-    overflow: hidden; /* Ensures content doesn't overflow the set aspect ratio */
-}
 </style>
