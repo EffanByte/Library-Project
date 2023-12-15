@@ -24,7 +24,7 @@
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Issued Books Management</h5>
                     <p class="card-text flex-grow-1">Check the status of all the issued books.</p>
-                    <a href={`/Librarian/RentManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
+                    <a href={`/Librarian/RentManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Click Here</a>
                 </div>
             </div>
         </div>
@@ -33,8 +33,8 @@
                 <img src="UserMNG.jpg" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">User Management</h5>
-                    <p class="card-text flex-grow-1">Brief description of the feature.</p>
-                    <a href={`/Librarian/RoomManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Learn More</a>
+                    <p class="card-text flex-grow-1">Add, Update and Remove Users and assign them roles.</p>
+                    <a href={`/Librarian/UserManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Click Here</a>
                 </div>
             </div>
         </div>
@@ -43,8 +43,8 @@
                 <img src="RoomMNG.jpg" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Room Management</h5>
-                    <p class="card-text flex-grow-1">Brief description of the feature.</p>
-                    <a href={`/Librarian/UserManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Learn More</a>
+                    <p class="card-text flex-grow-1">View Room Bookings and Edit them.</p>
+                    <a href={`/Librarian/RoomManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Click Here</a>
                 </div>
             </div>
         </div>

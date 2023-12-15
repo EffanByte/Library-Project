@@ -13,6 +13,12 @@ backgroundColor.set('#C6DEF1');
      else if (currentPath == 'http://localhost:8080/#/Catalogue'){
         backgroundColor.set('#C9E4DE');
      }
+     else if (currentPath == 'http://localhost:8080/#/Complaint'){
+      backgroundColor.set('#FF6961');
+     }
+          else if (currentPath == 'http://localhost:8080/#/LostFound'){
+      backgroundColor.set('#836953');
+     }
     }
        window.addEventListener('popstate', updateBG);
        updateBG();

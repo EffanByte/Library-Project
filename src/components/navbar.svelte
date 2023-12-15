@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte';
-    import {user, loggedIn} from "./store.js";
+    import {user, loggedIn, isLibrarian} from "./store.js";
     import { push } from 'svelte-spa-router';
     const dispatch = createEventDispatcher();
     
@@ -25,47 +25,46 @@
     function openSignup(){
         dispatch('signup');
     }
+    function goToLibrary(){
+        push('/Librarian/');
+    }
 
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <!-- Logo -->
-        <a class="navbar-brand" href="/#/">
-            Library Management
-        </a>
-
-        <!-- Toggler for Mobile View -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-            <!-- Tagline -->
-            <div class="navbar-nav">
-                <span class="nav-link"></span>
-            </div>
-        </div>
-{#if $loggedIn.is == true} <!-- Check if the user is logged in -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <div class="user-area" style = "cursor: pointer"on:click={toggleDropdown}>
+  <div class="container-fluid">
+    <!-- Logo -->
+    <a class="navbar-brand"     href="/#/">
+      Library Management
+    </a>
+{#if $isLibrarian.is == true}
+    <div class="navbar-center">
+      <button class="btn btn-primary" on:click={goToLibrary}>Go to Library</button>
+    </div>
+    {/if}
+    {#if $loggedIn.is == true}
+      <!-- Check if the user is logged in -->
+      <div class="user-area" style="cursor: pointer" on:click={toggleDropdown}>
+        
         Hello, {$user.username}!
-        {#if showDropdown} <!-- Dropdown toggle -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class = "dropdown-container" on:click = {toggleDropdown}>
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="dropdown-item" on:click={goToProfile}>Profile</div>
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="dropdown-item" on:click = {logout}>Log Out</div>    
-</div>
+        {#if showDropdown}
+          <!-- Dropdown toggle -->
+          <div class="dropdown-container" on:click={toggleDropdown}>
+            <div class="dropdown-item" on:click={goToProfile}>Profile</div>
+            <div class="dropdown-item" on:click={logout}>Log Out</div>
+          </div>
         {/if}
-    </div>
-{:else}
-    <div class="d-flex">
-        <button class="btn btn-outline-primary" type="button" on:click = {openLogin}>Login</button>
+      </div>
+    {:else}
+      <div class="d-flex">
+        <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
         <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click={openSignup}>Sign Up</button>
-    </div>
-{/if}
+      </div>
+    {/if}
+
+    <!-- New navbar element -->
+
+  </div>
 </nav>
 
 <style>
@@ -91,7 +90,7 @@
         color: black;
     }
 
-    .dropdown-item:hover {
+    .dropdown-item:hover {  
         background-color: #f1f1f1;
     }
 
