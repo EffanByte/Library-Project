@@ -21,14 +21,14 @@ function gotoComplaint(){
     <div class="row">
         <div class="col-md-6 mt-3">
             <div class="greeting mb-4">
-                {#if $user.username == ''}
+                {#if $user.role == ''}
             <h2>Good Afternoon, Guest!</h2>
             {:else}
                  <h2>Good Afternoon, {$user.username}!</h2>
                 {/if}
             </div>
         </div>
-        {#if $user.username != ''}
+        {#if $user.role != ''}
         <div class="col-md-6">
             <!-- Move the image and button to the top right side -->
             <div class="d-flex flex-column align-items-center justify-content-center mt-4 spa">
@@ -44,22 +44,25 @@ function gotoComplaint(){
     <div class="card">
       <img src="bookimg.jpg" alt="" class="card-img-top">
       <div class="card-body">
+
         <h5 class="card-title">Browse Catalogue</h5>
         <p class="card-text">Check out all the books in our library here.</p>
         <button on:click={gotoCatalogue} class="btn btn-outline-success btn-sm">Go</button>
       </div>
      </div>
     </div>
-        <div class="col-lg-4 mb-4">
-    <div class="card">
-      <img src="conferenceimg.jpg" alt="" class="card-img-top">
-      <div class="card-body">
-        <h5 class="card-title">Room Rental</h5>
-        <p class="card-text">Rent a conference room for all your meetings.</p>
+    {#if $user.role != ""}
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <img src="conferenceimg.jpg" alt="" class="card-img-top">
+            <div class="card-body">
+                <h5 class="card-title">Room Rental</h5>
+                <p class="card-text">Rent a conference room for all your meetings.</p>
         <button on:click = {gotoRoom} class="btn btn-outline-success btn-sm">Go</button>
       </div>
      </div>
     </div>
+    {/if}
   <div class="col-lg-4 mb-4">
   <div class="card">
       <img src="https://images.unsplash.com/photo-1516214104703-d870798883c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=700&q=60" alt="" class="card-img-top">
@@ -70,17 +73,22 @@ function gotoComplaint(){
       </div>
       </div>
     </div>
+        {#if $user.role != ""}
     <div class="col-lg-4 mb-4">
     <div class="card">
       <img src="complaint.jpg" alt="" class="card-img-top">
       <div class="card-body">
         <h5 class="card-title">File a Complaint</h5>
-        <p class="card-text">Tell us about your complaints.</p>
+        <p class="card-text">Tell us about your complaints so that we can fix them.</p>
        <button on:click = {gotoComplaint} class="btn btn-outline-success btn-sm">Go</button>
       </div>
      </div>
     </div>
+    {/if}
   </div>
+          {#if $user.role == ""}
+          <h2 class = "text-center">Login to access all the library features!</h2>
+          {/if}
 </div>
 
 <style>

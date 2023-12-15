@@ -1,6 +1,6 @@
 <script>
     import { link } from 'svelte-spa-router';
-
+    import {user} from '../components/store.js';
     import ScrollBar from '../components/ScrollBar.svelte';
 
 </script>
@@ -8,6 +8,7 @@
 
     <div class="row justify-content-center mt-5 mx-auto col-10">
         <!-- Repeat this structure for each card -->
+        {#if $user.role == "Supervisor" || $user.role == "Ebooks_manager" || $user.role == "Archivist" || $user.role == "Technical_Services_Librarian"}
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
                 <img src="BookMNG.webp" class="card-img-top" alt="Feature">
@@ -18,6 +19,8 @@
                 </div>
             </div>
         </div>
+        {/if}
+
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
                 <img src="RentMNG.png" class="card-img-top" alt="Feature">
@@ -28,16 +31,21 @@
                 </div>
             </div>
         </div>
+
+                {#if $user.role == "Supervisor"}
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
                 <img src="UserMNG.jpg" class="card-img-top" alt="Feature">
                 <div class="card-body d-flex flex-column">
+
                     <h5 class="card-title">User Management</h5>
                     <p class="card-text flex-grow-1">Add, Update and Remove Users and assign them roles.</p>
                     <a href={`/Librarian/UserManagement/`} class="btn btn-primary mt-2 align-self-start" use:link >Click Here</a>
                 </div>
             </div>
         </div>
+        {/if}
+        {#if $user.role == "Supervisor" || $user.role == "Technical_Services_Librarian"}
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
                 <img src="RoomMNG.jpg" class="card-img-top" alt="Feature">
@@ -48,7 +56,7 @@
                 </div>
             </div>
         </div>
-
+        {/if}
     </div>
 
 <style>
