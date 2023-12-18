@@ -12,6 +12,7 @@
         function logout() {
         loggedIn.set({is: false});
         user.set({ username: '',});
+        push('/');
         showDropdown = false;
     }
         function goToProfile() {

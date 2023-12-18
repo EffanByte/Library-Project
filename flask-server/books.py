@@ -85,6 +85,79 @@ def get_book_by_id(book_id):
     conn.close()
     return book
 
+def get_book_by_title(book_title):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary = True)
+    cursor.execute('SELECT * FROM books WHERE LOWER(Title) = LOWER(%s)', (book_title,))
+    book = cursor.fetchone()
+    
+    if book and book['coverImage']:
+        book['coverImage'] = base64.b64encode(book['coverImage']).decode('utf-8')
+    cursor.close()
+    conn.close()
+    return book
+
+def add_book_to_db(title, author, genre, description, type_id, cover_image):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # If cover_image is a base64 string, decode it to binary
+    if cover_image:
+        cover_image = base64.b64decode(cover_image)
+
+    query = '''INSERT INTO books (Title, Author, Genre, Description, TypeID, coverImage)
+               VALUES (%s, %s, %s, %s, %s, %s)'''
+    
+    cursor.execute(query, (title, author, genre, description, type_id, cover_image))
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+def add_pdf_to_book(book_id, pdf_data):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "INSERT INTO BookPDFs (BookID, PDF) VALUES (%s, %s)"
+    cursor.execute(query, (book_id, pdf_data))
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+
+
+def update_book(book_id, book_data):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Prepare the update query
+    query = """
+    UPDATE books
+    SET Title = %s, Author = %s, Description = %s, Genre = %s, TypeID = %s
+    WHERE BookID = %s
+    """
+    values = (book_data['Title'], book_data['Author'], book_data['Description'], book_data['Genre'], book_data['TypeID'], book_id)
+
+    cursor.execute(query, values)
+    affected_rows = cursor.rowcount
+
+    update_pdf_for_book(book_id, book_data)
+
+    conn.commit()
+    cursor.close()
+    conn.close()
+
+    return affected_rows > 0
+
+
+def update_pdf_for_book(book_id, pdf_data):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    query = "UPDATE BookPDFs SET PDF = %s WHERE BookID = %s"
+    cursor.execute(query, (pdf_data, book_id))
+    conn.commit()
+    cursor.close()
+    conn.close()    
+
 
 
 # Function to manually insert an image of book cover into the database
