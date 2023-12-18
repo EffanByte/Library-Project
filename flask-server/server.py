@@ -223,14 +223,24 @@ def login():
     # Query for user
     cursor.execute('SELECT * FROM user WHERE Email = %s', (email,))
     user = cursor.fetchone()
-
+    role = ''
     # Query for librarian if user is not found
     if user is None:
         cursor.execute('SELECT * FROM librarian WHERE Email = %s', (email,))
         user = cursor.fetchone()
         user_type = 'librarian'
+        
     else:
         user_type = 'user'
+
+        # Inside your login function, after you determine the user_type
+    if user:
+        if user_type == 'librarian':
+            cursor.execute('SELECT RoleName FROM jobrole JOIN librarian USING (LibrarianID) WHERE Email = %s', (email,))
+            role = cursor.fetchone()
+            role = role['RoleName'] if role else 'No role found'
+       
+        
 
     # Close the database connection
     cursor.close()
@@ -241,7 +251,8 @@ def login():
         return jsonify({
             'email': user['Email'],
             'name': user['Name'],
-            'userType': user_type
+            'userType': user_type,
+            'role': role
         }), 200
     else:
         # If password does not match

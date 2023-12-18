@@ -10,27 +10,31 @@
     let Email = '';
     let Name = '';
     let Password = '';
+    let userType = '';
+    let role = '';
 
     async function handleLogin() {
         try {
             const response = await axios.post('http://localhost:8000/api/login', {
                 Email,
                 Name,
-                Password
+                Password,
+                userType,
+                role
             });
 
             if (response.status === 200) {
                 // Assuming the backend response contains the user and a flag for librarian status
                 loggedIn.set({ is: true }); // Updating store value
-                user.set({ username: response.data.name }); // Updating user store
+                user.set({username: response.data.name, role: response.data.role}); // Updating user store
 
                 close();
-
-                if (response.data.isLibrarian) {
+                
+                console.log(response);
+                if (response.data.userType == 'librarian') {
                     push('/Librarian/');
                 } else {
-                    //push('/User'); // Redirect to a different page for non-librarians
-                    push('/Librarian/'); // redirecting to librarian page by default temporarily
+                    push('/'); // Home.svelte is default home page
                 }
             } else {
                 alert("Invalid credentials");
