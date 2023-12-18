@@ -40,7 +40,7 @@ import os
 
 import PySimpleGUI as sg
 import webbrowser as wb
-import  fitz
+import fitz
 from threading import Thread
 
 DEF_PAD = sg.DEFAULT_ELEMENT_PADDING
