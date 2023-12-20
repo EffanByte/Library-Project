@@ -1,6 +1,7 @@
 <script>
     import axios from 'axios';
-    let BooktoAdd = {
+    import {onMount} from "svelte";
+    let booktoAdd = {
             Title: '',
             Genre: '',
             Description: "",
@@ -30,11 +31,11 @@
         return;
     }
     const formData = new FormData();
-    formData.append('Title', BooktoAdd.Title);
-    formData.append('Author', BooktoAdd.Author);
-    formData.append('Genre', BooktoAdd.Genre);
-    formData.append('Description', BooktoAdd.Description);
-    formData.append('TypeID', BooktoAdd.TypeID);
+    formData.append('Title', booktoAdd.Title);
+    formData.append('Author', booktoAdd.Author);
+    formData.append('Genre', booktoAdd.Genre);
+    formData.append('Description', booktoAdd.Description);
+    formData.append('TypeID', booktoAdd.TypeID);
 
     // Assuming droppedImage is a file object from file input
     if (droppedImage) {
@@ -138,9 +139,11 @@ function handleImageDrop(event)
 
 let droppedPDF = null;
   // Reactive statement to check if the selected book type is eBook (1)
-  $: isEbookSelected = () => {
+  /*$: isEbookSelected = () => {
         return BooktoAdd.TypeID === 1 || bookToUpdate.TypeID === 1;
-    };
+    };*/
+ 
+
 
 
 function handlePDFDrop(event) {
@@ -191,12 +194,36 @@ function handlePDFKeydown(event) {
 
 
 function handleBookTypeChange(event) {
-        BooktoAdd.TypeID = parseInt(event.target.value);
+        booktoAdd.TypeID = event.target.value;
+ 
     }
 
-    function handleUpdateBookTypeChange(event) {
-        bookToUpdate.TypeID = parseInt(event.target.value);
+function handleUpdateBookTypeChange(event) {
+    bookToUpdate.TypeID = parseInt(event.target.value, 10);
+    console.log(bookToUpdate.TypeID);
+    console.log(booktoAdd.TypeID)
+    
+}
+
+$: isEbookSelected = booktoAdd.TypeID == 1 || bookToUpdate.TypeID == 1;
+
+let inputPDF = document.getElementById("input-pdf");
+
+
+  function uploadPDF() {
+    console.log("Testing");
+
+    // Check if files are selected
+    if (inputPDF && inputPDF.files && inputPDF.files.length > 0) {
+      const selectedFile = inputPDF.files[0];
+      console.log("Selected file:", selectedFile);
+      // Now you can do something with the selected file
     }
+  }
+    onMount(() => {
+    inputPDF = document.getElementById("input-pdf");
+  });
+  
 
 </script>
 
@@ -207,27 +234,28 @@ function handleBookTypeChange(event) {
             <form on:submit|preventDefault={addBook}>
                 <div class="mb-3">
                     <label for="bookName" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="Title" bind:value={BooktoAdd.Title} required>
+                    <input type="text" class="form-control" id="Title" bind:value={booktoAdd.Title} required>
                 </div>
                 <div class="mb-3">
                     <label for="bookAuthor" class="form-label">Author</label>
-                    <input type="text" class="form-control" id="bookAuthor" bind:value={BooktoAdd.Author} required>
+                    <input type="text" class="form-control" id="bookAuthor" bind:value={booktoAdd.Author} required>
                 </div>
                 <div class="mb-3">
                     <label for="bookGenre" class="form-label">Genre</label>
-                    <input type="text" class="form-control" id="bookGenre" bind:value={BooktoAdd.Genre} required>
+                    <input type="text" class="form-control" id="bookGenre" bind:value={booktoAdd.Genre} required>
                 </div>
                 <div class="mb-3">
                     <label for="bookDescription" class="form-label">Description</label>
-                    <textarea class="form-control" id="bookDescription" bind:value={BooktoAdd.Description} rows="3"></textarea>
+                    <textarea class="form-control" id="bookDescription" bind:value={booktoAdd.Description} rows="3"></textarea>
                 </div>
                 <div class="mb-3">
                     <label for="bookType" class="form-label">Book Type</label>
-                    <select id="bookType" bind:value={BooktoAdd.TypeID} on:change={handleBookTypeChange} class="form-control">
-                        <option value="1" >eBook</option>
-                        <option value="2" >Physical Book</option>
+                    <select type="bookType" id = "bookType" bind:value={booktoAdd.TypeID} on:change={handleBookTypeChange} class="form-control">
+                        <option value= 1 >eBook</option>
+                        <option value= 2 >Physical Book</option>
                     </select>
                 </div>
+              
                 <label for="image-drop-area" class="form-label">Upload Image</label>
                <!-- <div class="drop-area" on:drop={handleImageDrop} on:dragover={handleDragOver}>
                     {#if droppedImage}
@@ -256,8 +284,15 @@ function handleBookTypeChange(event) {
            
   
 
-        {#if isEbookSelected()}
-        <!-- This is your drop area for PDFs -->
+        {#if isEbookSelected}
+<label for="drop-area" class="form-label">Upload PDF</label>
+<div class="drop-area">
+  <label for="input-pdf" on:change={uploadPDF} id="drop-area">
+    <input type="file" accept="application/pdf" id="input-pdf" />
+  </label>
+</div>
+    
+        <!-- This is your drop area for PDFs 
         <label for="pdf-drop-area" class="form-label">Upload PDF</label>
         <div class="drop-area" 
             role= "button"
@@ -265,19 +300,26 @@ function handleBookTypeChange(event) {
             on:keydown={handlePDFKeydown} 
             on:drop={handlePDFDrop} 
             on:dragover={handleDragOver}
-            tabindex="0"> <!-- Make the div focusable -->
+            tabindex="0">  Make the div focusable 
             {#if droppedPDF}
                 <p>PDF: {droppedPDF.name}</p>
                 {:else}
                     <p>Drop PDF here or click to upload</p>
                     <input type="file" id="pdf-drop-area" class="file-input" accept="application/pdf" on:change="{(e) => droppedPDF = e.target.files[0]}">
                 {/if}
-                     </div>
+                    </div>-->
                 {/if}
 
                 <button type="submit" class="btn btn-primary">Add Book</button>
             </form>
         </div>
+
+    <!---<div class = "drop-area">
+        <label for = "input-pdf">
+            <input type = "file" accept="application/pdf" id = "input-pdf">
+        </label>
+
+    </div>-->
 
  
 <div class="col">
@@ -307,9 +349,9 @@ function handleBookTypeChange(event) {
 
                     <div class="mb-3">
                         <label for="updateBookType" class="form-label">Book Type</label>
-                        <select id="updateBookType" bind:value = {bookToUpdate.TypeID} on:change={handleUpdateBookTypeChange} class="form-control">
-                            <option value="1" >eBook</option>
-                            <option value="2" >Physical Book</option>
+                        <select name = "updateBookType" id="updateBookType" bind:value = {bookToUpdate.TypeID} class="form-control">
+                            <option value= 1 >eBook</option>
+                            <option value= 2 >Physical Book</option>
                         </select>
                     </div>
         
@@ -324,15 +366,13 @@ function handleBookTypeChange(event) {
                         <label for="updateDescription" class="form-label">Description</label>
                         <textarea class="form-control" bind:value={bookToUpdate.Description} id="updateDescription" rows="3"></textarea>
                     </div>
-                    {#if isEbookSelected()}
-                        <div class="drop-area" on:drop={handlePDFDrop} on:dragover={handleDragOver}>
-                            {#if droppedPDF}
-                                <p>PDF: {droppedPDF.name}</p>
-                            {:else}
-                                <p>Drop PDF here or click to upload</p>
-                            <input type="file" class="file-input" accept="application/pdf" on:change="{(e) => droppedPDF = e.target.files[0]}">
-                            {/if}
-                        </div>
+        {#if isEbookSelected}
+<label for="drop-area" class="form-label">Upload PDF</label>
+<div class="drop-area">
+  <label for="input-pdf" on:change={uploadPDF} id="drop-area">
+    <input type="file" accept="application/pdf" id="input-pdf" />
+  </label>
+</div>
                     {/if}
 
                     <button type="submit" class="btn btn-primary">Update Book</button>

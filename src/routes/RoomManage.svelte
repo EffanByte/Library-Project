@@ -1,6 +1,7 @@
 <!-- RoomManage.svelte -->
 
 <script>
+   import { onMount } from 'svelte';
   let selectedRoom = null;
 
   let rooms = [
@@ -18,9 +19,47 @@
     // Logic to update the table based on the selected room
   }
 
-  function removeBooking(roomId, timingIndex) {
+ function removeBooking(roomId, timing) {
     // Logic for removing the booking from the selected room and timing
+    const room = rooms.find(room => room.id === roomId);
+    const timingIndex = room.bookedTimings.indexOf(timing);
+
+    if (timingIndex !== -1) {
+      // Remove booking locally
+      room.bookedTimings.splice(timingIndex, 1);
+      room.bookedBy.splice(timingIndex, 1);
+
+      // Communicate with the backend to cancel the reservation
+      cancelReservation(roomId, timing);
+    }
   }
+
+ async function cancelReservation(roomId, timing) {
+    try {
+      const response = await fetch('http://localhost:8001/api/rooms/cancel', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          RoomNo: roomId,
+          ReservationTime: timing,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Reservation canceled successfully');
+      } else {
+        console.error('Failed to cancel reservation');
+      }
+    } catch (error) {
+      console.error('Error during reservation cancelation:', error);
+    }
+  }
+
+ onMount(() => {
+    // You can use onMount to load initial data or perform actions when the component is mounted.
+  });
 </script>
 
 <main>

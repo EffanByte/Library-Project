@@ -4,6 +4,7 @@ from flask_cors import CORS
 from books import *
 from classes.user import *
 from werkzeug.security import check_password_hash
+from datetime import datetime
 import re
 
 
@@ -30,7 +31,26 @@ def api_get_books():
     except Exception as e:
         return jsonify(error=str(e)), 500
 
+def book_room():
+    try:
+        data = request.json
+        room_no = data.get('RoomNo')
+        qalam_id = data.get('QalamID')
+        reservation_time = data.get('ReservationTime')
 
+        room = next((r for r in rooms if r["RoomNo"] == room_no), None)
+
+        if room and room["ReservationStatus"] == "Available":
+            room["QalamID"] = qalam_id
+            room["ReservationTime"] = reservation_time
+            room["ReservationStatus"] = "Booked"
+            room["BookedTimings"].append(reservation_time)
+
+            return jsonify({"message": "Room booked successfully"}), 200
+        else:
+            return jsonify({"error": "Room not available for booking"}), 400
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 
 # Route to get books by ID to display in BookDetail.svelte
@@ -258,6 +278,55 @@ def login():
         # If password does not match
         return jsonify({'error': 'Invalid credentials'}), 401
     
+def is_room_available(room_no, reservation_time):
+    # Check if the room is available at the specified time
+    room = next((r for r in rooms if r["RoomNo"] == room_no), None)
+    return room and room["ReservationStatus"] == "Available" and reservation_time not in room["BookedTimings"]
+
+
+rooms = [
+    {"RoomNo": 1, "ReservationStatus": "Available", "BookedTimings": []},
+    {"RoomNo": 2, "ReservationStatus": "Available", "BookedTimings": []},
+    # Add more rooms with their bookedTimings as needed
+]
+def is_room_available(room_no, reservation_time):
+    room = next((r for r in rooms if r["RoomNo"] == room_no), None)
+    return (
+        room
+        and room["ReservationStatus"] == "Available"
+        and reservation_time not in room["BookedTimings"]
+    )
+
+
+
+@app.route('/api/room', methods=['POST'])
+def book_room():
+    try:
+        data = request.json
+        room_no = data.get('RoomNo')
+        qalam_id = data.get('QalamID')
+        reservation_time = data.get('ReservationTime')
+
+        if is_room_available(room_no, reservation_time):
+            # Find the room in the list
+            room = next((r for r in rooms if r["RoomNo"] == room_no), None)
+            if room:
+                # Update the room reservation details
+                room["QalamID"] = qalam_id
+                room["ReservationTime"] = reservation_time
+                room["ReservationStatus"] = "Booked"
+                
+                # Update the booked timings for the room
+                room["BookedTimings"].append(reservation_time)
+
+                return jsonify({"message": "Room booked successfully"}), 200
+            else:
+                return jsonify({"error": "Room not found"}), 404
+        else:
+            return jsonify({"error": "Room not available for booking"}), 400
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+
 # running the flask server    
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 8000, debug=True)

@@ -1,16 +1,16 @@
 <script>
     // Dummy items array
     const items = [
-        { id: 1, cover: 'path/to/cover1.jpg', text: 'Item 1' },
-        { id: 2, cover: 'path/to/cover2.jpg', text: 'Item 2' },
-        { id: 1, cover: 'path/to/cover1.jpg', text: 'Item 1' },
-        { id: 2, cover: 'path/to/cover2.jpg', text: 'Item 2' },
-        { id: 1, cover: 'path/to/cover1.jpg', text: 'Item 1' },
-        { id: 2, cover: 'path/to/cover2.jpg', text: 'Item 2' },
-        { id: 1, cover: 'path/to/cover1.jpg', text: 'Item 1' },
-        { id: 2, cover: 'path/to/cover2.jpg', text: 'Item 2' },
-        { id: 1, cover: 'path/to/cover1.jpg', text: 'Item 1' },
-        { id: 2, cover: 'path/to/cover2.jpg', text: 'Item 2' },
+        { id: 1, cover: 'avatar2.avif', text: 'Item 1' },
+        { id: 2, cover: 'booknews.png', text: 'Item 2' },
+        { id: 1, cover: 'booknews.png', text: 'Item 1' },
+        { id: 2, cover: 'avatarimg.png', text: 'Item 2' },
+        { id: 1, cover: 'avatarimg.png', text: 'Item 1' },
+        { id: 2, cover: 'booknews.png', text: 'Item 2' },
+        { id: 1, cover: 'avatarimg.png', text: 'Item 1' },
+        { id: 2, cover: 'avatar2.avif', text: 'Item 2' },
+        { id: 1, cover: 'booknews.png', text: 'Item 1' },
+        { id: 2, cover: 'booknews.png', text: 'Item 2' },
 
 
 
@@ -51,22 +51,16 @@
     .scrollbar::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
-
-    .card-item {
-        flex: 0 0 auto; /* Prevents cards from shrinking */
-        width: 200px; /* Fixed width for each card */
-        margin-right: 15px; /* Space between cards */
-        border-radius: 0.75rem; /* Rounded corners */
-    }
-
-    .card-img-top {
-        height: 150px; /* Consistent height for images */
-        object-fit: cover; /* Ensures images cover the card top area */
-        border-top-left-radius: 0.75rem; /* Align image border with card */
-        border-top-right-radius: 0.75rem;
+    .card {
+        width: 150px;
+        display: flex;
+        flex-direction: row;
     }
 
     .card-body {
         padding: 1rem; /* Inner card spacing */
+    }
+    img {
+        max-height: 20vh
     }
 </style>

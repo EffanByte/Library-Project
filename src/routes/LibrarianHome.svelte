@@ -2,7 +2,7 @@
     import { link } from 'svelte-spa-router';
     import {user} from '../components/store.js';
     import ScrollBar from '../components/ScrollBar.svelte';
-
+    
 </script>
 <ScrollBar></ScrollBar>
 

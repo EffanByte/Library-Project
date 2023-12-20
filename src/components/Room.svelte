@@ -1,5 +1,6 @@
 <!-- Import Bootstrap CSS if not already imported -->
 <script>
+  import {user} from "./store.js";
   let selectedRoom = null;
 
   let rooms = [
@@ -13,20 +14,41 @@
     '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'
   ];
 
-  function updateTable() {
-    // Logic to update the table based on the selected room
-  }
+function updateTable() {
 
-  function bookNow(selectedTime) {
-    // Logic for booking the selected time and sending it to the database
-    // Here you would typically make an API request to your backend to handle the booking
-    if (selectedRoom)
-    console.log(`Booked for ${selectedTime} in Room ${rooms.find(room => room.id == selectedRoom).name}`);
+}
+
+
+ async function bookNow(selectedTime) {
+    const roomNo = selectedRoom;
+    console.log($user.id);
+    const qalamID =  $user.id; // Replace with your user ID or fetch it from the user session
+    const reservationTime = selectedTime;
+
+    try {
+        const response = await fetch('http://localhost:8000/api/room', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ RoomNo: roomNo, QalamID: qalamID, ReservationTime: reservationTime }),
+      });
+      console.log(roomNo, qalamID, reservationTime);
+      if (response.ok) {
+        console.log("Room booked successfully");
+        updateTable(); // Refresh the table after booking
+      } else {
+        const errorData = await response.json();
+        console.error('Error:', errorData.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 </script>
 
 <main>
-  <div class="heading">Book a Room Here!</div>
+  <div class="heading">Book a Room Here!</div>  
   <div class="container">
     <div class="row">
       <!-- Left side with dropdown room list -->
@@ -43,32 +65,34 @@
       <!-- Right side with the smaller Bootstrap table -->
       <div class="col-md-6">
         <div class="table-container">
-          <table class="table table-sm table-bordered">
+   <table class="table table-sm table-bordered">
             <thead>
               <tr>
                 <th>Time</th>
                 <th>Availability</th>
-                <th>Action</th> <!-- New column for the "Book Now" button -->
+                <th>Action</th> <!-- New column for the "Remove" button -->
               </tr>
             </thead>
-            <tbody>
-              {#each timeSlots as time}
-                <tr>
-                  <td>{time}</td>
-                  <td class="{rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time) ? 'booked' : 'available'}">
-                    {rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time) ? 'Booked' : 'Available'}
-                  </td>
-                  <td>
-                    {#if rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time)}
-                      <button class="btn btn-secondary btn-sm" disabled>Not Available</button>
-                    {:else}
-                      <button class="btn btn-primary btn-sm" on:click={() => bookNow(time)}>Book Now</button>
-                    {/if}
-                  </td>
-                </tr>
-              {/each}
-            </tbody>
+<tbody>
+  {#each timeSlots as time}
+    <tr>
+      <td>{time}</td>
+      <td class="{rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time) ? 'booked' : 'available'}">
+        {rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time) ? 'Booked' : 'Available'}
+      </td>
+        <td>
+          {#if rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time)}
+          <button class="btn btn-secondary btn-sm" disabled>Not Available</button>
+          {:else}
+          <button class="btn btn-primary btn-sm" on:click={() => bookNow(time)}>Book Now</button>
+          {/if}
+        </td>
+    </tr>
+  {/each}
+</tbody>
+
           </table>
+          
         </div>
       </div>
     </div>

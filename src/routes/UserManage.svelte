@@ -3,11 +3,7 @@
 <script>
     const roles = ['head librarian', 'technical services librarian', 'ebooks manager', 'student', 'archivist'];
   let users = [
-    { id: 1, qalamId: 'Q123', name: 'John Doe', email: 'john@example.com', role: 'head librarian' },
-    { id: 2, qalamId: 'Q456', name: 'Jane Smith', email: 'jane@example.com',  role: 'technical services librarian' },
-    { id: 3, qalamId: 'Q789', name: 'Alice Johnson', email: 'alice@example.com', role: 'ebooks manager' },
-    { id: 4, qalamId: 'Q101', name: 'Bob Wilson', email: 'bob@example.com', role: 'student' },
-    { id: 5, qalamId: 'Q202', name: 'Eva Brown', email: 'eva@example.com', role: 'archivist' },
+
   ];
 
   let newUser = {
