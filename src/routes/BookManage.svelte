@@ -23,7 +23,7 @@
 
     async function addBook() {
     // First, check if the book exists
-    await checkIfBookExists(BooktoAdd.Title);
+    await checkIfBookExists(booktoAdd.Title);
 
     // Now, use the bookexists variable to decide the next step
     if (bookexists) {
@@ -205,7 +205,8 @@ function handleUpdateBookTypeChange(event) {
     
 }
 
-$: isEbookSelected = booktoAdd.TypeID == 1 || bookToUpdate.TypeID == 1;
+$: isEbookSelectedInUpdatePDF = bookToUpdate.TypeID == 1;
+$: isEbookSelectedInAddPDF = booktoAdd.TypeID == 1;
 
 let inputPDF = document.getElementById("input-pdf");
 
@@ -284,7 +285,7 @@ let inputPDF = document.getElementById("input-pdf");
            
   
 
-        {#if isEbookSelected}
+        {#if isEbookSelectedInAddPDF}
 <label for="drop-area" class="form-label">Upload PDF</label>
 <div class="drop-area">
   <label for="input-pdf" on:change={uploadPDF} id="drop-area">
@@ -366,7 +367,7 @@ let inputPDF = document.getElementById("input-pdf");
                         <label for="updateDescription" class="form-label">Description</label>
                         <textarea class="form-control" bind:value={bookToUpdate.Description} id="updateDescription" rows="3"></textarea>
                     </div>
-        {#if isEbookSelected}
+        {#if isEbookSelectedInUpdatePDF}
 <label for="drop-area" class="form-label">Upload PDF</label>
 <div class="drop-area">
   <label for="input-pdf" on:change={uploadPDF} id="drop-area">
