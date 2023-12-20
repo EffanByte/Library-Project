@@ -23,5 +23,5 @@ def signup_Librarian(librarianID, email, name, password):
     db_connection.commit()
     cursor.close()
 
-signup_Librarian(1, "hamzariaz999@gmail.com", "Hamza Riaz", "123")
+signup_Librarian(3, "aharoon.bscs22seecs@seecs.edu.pk", "Arham Haroon", "123")
 

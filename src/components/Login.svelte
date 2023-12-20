@@ -7,6 +7,7 @@
     const dispatch = createEventDispatcher();
 
     export let show;
+    let id = '';
     let Email = '';
     let Name = '';
     let Password = '';
@@ -16,6 +17,7 @@
     async function handleLogin() {
         try {
             const response = await axios.post('http://localhost:8000/api/login', {
+                id,
                 Email,
                 Name,
                 Password,
@@ -26,7 +28,7 @@
             if (response.status === 200) {
                 // Assuming the backend response contains the user and a flag for librarian status
                 loggedIn.set({ is: true }); // Updating store value
-                user.set({username: response.data.name, role: response.data.role}); // Updating user store
+                user.set({id: response.data.id, username: response.data.name, role: response.data.role}); // Updating user store
 
                 close();
                 
