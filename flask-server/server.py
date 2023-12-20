@@ -4,6 +4,8 @@ from flask_cors import CORS
 from books import *
 from classes.user import *
 from werkzeug.security import check_password_hash
+from classes.FoundItems import *
+from classes.LostItems import *
 from datetime import datetime
 import re
 
@@ -315,8 +317,165 @@ def book_room():
         else:
             return jsonify({"error": "Room not available for booking"}), 400
     except Exception as e:
-        return jsonify(error=str(e)), 500
+        return jsonify({'error': str(e)}), 500
 
+
+@app.route('/api/allUsers', methods=['GET'])
+def get_all_users():
+    try:
+        # Assuming you have a method to get the database connection
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get information for all users
+        all_users_info = User.get_all_users_info(conn)
+        print(all_users_info)
+        cursor.close()
+        conn.close()
+        
+       
+        return jsonify(all_users_info), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/all_issued_books_library', methods=['GET'])
+def get_all_issued_books_library():
+    try:
+        # Create a cursor
+        cur = mysql.connection.cursor()
+
+        # Call the MySQL stored procedure
+        cur.callproc('GetAllIssuedBooksLibrary')
+
+        # Fetch all the rows
+        result_set = cur.fetchall()
+
+        # Convert the result set to a list of dictionaries for JSON serialization
+        issued_books = [{'BookID': row[0], 'Title': row[1], 'IssuedBy': row[2]} for row in result_set]
+
+        # Close the cursor
+        cur.close()
+
+        return jsonify(issued_books), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500   
+    
+@app.route('/api/all_found_items', methods=['GET'])
+def get_all_found_items():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Assuming you have a method in your FoundItems class to get all found items
+        found_items = FoundItems.get_all_found_items(conn)
+
+        conn.close()
+        cursor.close()
+        return jsonify(found_items), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/all_lost_items', methods=['GET'])
+def get_all_lost_items():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Assuming you have a method in your LostItems class to get all lost items
+        lost_items = LostItems.get_all_lost_items(conn)
+
+        conn.close()
+        cursor.close()
+        return jsonify(lost_items), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/report_found_item', methods=['POST'])
+def report_found_item():
+    try:
+        data = request.json
+        qalam_id = data['qalam_id']
+        item_description = data['item_description']
+        date_reported = data['date_reported']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("CALL ReportFoundItem(%s, %s, %s)", (qalam_id, item_description, date_reported))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Found item reported successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/report_lost_item', methods=['POST'])
+def report_lost_item():
+    try:
+        data = request.json
+        qalam_id = request.args.get['QalamID']
+        print(qalam_id)
+        #qalam_id = data['qalam_id']
+        item_description = data['item_description']
+        date_reported = data['date_reported']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("CALL ReportLostItem(%s, %s, %s)", (qalam_id, item_description, date_reported))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Lost item reported successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500 
+    
+
+
+
+
+@app.route('/api/users/<int:qalam_id>', methods=['PUT'])
+def update_user(qalam_id):
+    try:
+        data = request.json
+        new_email = data['Email']
+        new_name = data['Name']
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", new_email):
+            return jsonify({"error": "Invalid email format"}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Check if the new email is associated with another user
+        cursor.execute("SELECT * FROM user WHERE Email = %s AND QalamID != %s", (new_email, qalam_id))
+        if cursor.fetchone():
+            cursor.close()
+            conn.close()
+            return jsonify({"error": "This email is associated with another QalamID"}), 409
+
+        # Update user details
+        cursor.execute("UPDATE user SET Email = %s, Name = %s WHERE QalamID = %s", (new_email, new_name, qalam_id))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+        return jsonify({"message": "User updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 # running the flask server    
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 8000, debug=True)
