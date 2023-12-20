@@ -13,6 +13,7 @@ import re
 app = Flask(__name__)
 CORS(app)
 
+
 # function to establish database connection
 def get_db_connection():
     return mysql.connector.connect(
@@ -22,6 +23,72 @@ def get_db_connection():
         password='',
         database='virtual_library'
     )
+@app.route('/api/rooms', methods=['GET'])
+def get_all_rooms_from_db():
+    connection = get_db_connection()
+    cursor = connection.cursor(dictionary=True)
+    RoomsDB = []
+    try:
+        # Fetch all rooms from the "room" table
+        cursor.execute("SELECT * FROM room")
+        rooms = cursor.fetchall()
+        # Convert BLOB data to base64 if needed
+        # For example, if you have an attribute like "coverImage" in the "room" table
+
+        # rooms = convert_blob_to_base64(rooms)
+        return rooms
+    except Exception as e:
+        print("Error fetching rooms:", e)
+    finally:
+        cursor.close()
+        connection.close()  
+
+
+@app.route('/api/rooms', methods=['POST'])
+def post_to_room():
+    try:
+        data = request.json
+        RoomNo = data.get('RoomNo')
+        QalamID = str(data.get('QalamID'))
+        ReservationTime = data.get('ReservationTime')
+        ReservationStatus = data.get('ReservationStatus')
+
+        db_connection = get_db_connection()
+        cursor = db_connection.cursor()
+        print(RoomNo, QalamID, ReservationTime, ReservationStatus)
+        cursor.execute(
+            "INSERT INTO room (RoomNo, QalamID, ReservationTime, ReservationStatus) VALUES (%s, %s, %s, %s)",
+            (RoomNo, QalamID, ReservationTime, ReservationStatus)
+        )
+        print("Works")
+        db_connection.commit()
+        cursor.close()
+        db_connection.close()
+
+        return jsonify({"message": "Data added to the room table successfully"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+from flask import request, jsonify
+
+@app.route('/api/remove_bookings', methods=['POST'])
+def remove_user_bookings():
+    try:
+        data = request.json
+        qalam_id = data.get('QalamID')
+
+        db_connection = get_db_connection()
+        cursor = db_connection.cursor()
+
+        # Delete all bookings for the specified user
+        cursor.execute("DELETE FROM Room WHERE QalamID = %s and reservationtime != '2023-12-20 08:00:00'", (qalam_id,))
+        db_connection.commit()
+        db_connection.close()
+
+        return jsonify({"message": "All bookings removed successfully"}), 200
+
+    except Exception as e:
+        return jsonify(error=str(e)), 500
 
 
 # Route to get all books for display in Catalogue.svelte
@@ -269,55 +336,6 @@ def login():
     else:
         # If password does not match
         return jsonify({'error': 'Invalid credentials'}), 401
-    
-def is_room_available(room_no, reservation_time):
-    # Check if the room is available at the specified time
-    room = next((r for r in rooms if r["RoomNo"] == room_no), None)
-    return room and room["ReservationStatus"] == "Available" and reservation_time not in room["BookedTimings"]
-
-
-rooms = [
-    {"RoomNo": 1, "ReservationStatus": "Available", "BookedTimings": []},
-    {"RoomNo": 2, "ReservationStatus": "Available", "BookedTimings": []},
-    # Add more rooms with their bookedTimings as needed
-]
-def is_room_available(room_no, reservation_time):
-    room = next((r for r in rooms if r["RoomNo"] == room_no), None)
-    return (
-        room
-        and room["ReservationStatus"] == "Available"
-        and reservation_time not in room["BookedTimings"]
-    )
-
-
-
-@app.route('/api/room', methods=['POST'])
-def book_room():
-    try:
-        data = request.get_json()
-        room_no = data.get('RoomNo')
-        qalam_id = data.get('QalamID')
-        reservation_time = data.get('ReservationTime')
-
-        if is_room_available(room_no, reservation_time):
-            # Find the room in the list
-            room = next((r for r in rooms if r["RoomNo"] == room_no), None)
-            if room:
-                # Update the room reservation details
-                room["QalamID"] = qalam_id
-                room["ReservationTime"] = reservation_time
-                room["ReservationStatus"] = "Booked"
-                
-                # Update the booked timings for the room
-                room["BookedTimings"].append(reservation_time)
-
-                return jsonify({"message": "Room booked successfully"}), 200
-            else:
-                return jsonify({"error": "Room not found"}), 404
-        else:
-            return jsonify({"error": "Room not available for booking"}), 400
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/allUsers', methods=['GET'])
