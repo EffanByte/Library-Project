@@ -31,28 +31,6 @@ def api_get_books():
     except Exception as e:
         return jsonify(error=str(e)), 500
 
-def book_room():
-    try:
-        data = request.json
-        room_no = data.get('RoomNo')
-        qalam_id = data.get('QalamID')
-        reservation_time = data.get('ReservationTime')
-
-        room = next((r for r in rooms if r["RoomNo"] == room_no), None)
-
-        if room and room["ReservationStatus"] == "Available":
-            room["QalamID"] = qalam_id
-            room["ReservationTime"] = reservation_time
-            room["ReservationStatus"] = "Booked"
-            room["BookedTimings"].append(reservation_time)
-
-            return jsonify({"message": "Room booked successfully"}), 200
-        else:
-            return jsonify({"error": "Room not available for booking"}), 400
-    except Exception as e:
-        return jsonify(error=str(e)), 500
-
-
 # Route to get books by ID to display in BookDetail.svelte
 @app.route('/api/books/<int:book_id>', methods=['GET'])
 def api_get_book_by_id(book_id):
@@ -314,7 +292,7 @@ def is_room_available(room_no, reservation_time):
 @app.route('/api/room', methods=['POST'])
 def book_room():
     try:
-        data = request.json
+        data = request.get_json()
         room_no = data.get('RoomNo')
         qalam_id = data.get('QalamID')
         reservation_time = data.get('ReservationTime')

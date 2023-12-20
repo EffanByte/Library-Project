@@ -1,5 +1,6 @@
 <!-- Import Bootstrap CSS if not already imported -->
 <script>
+    import axios from "axios";
   import {user} from "./store.js";
   let selectedRoom = null;
 
@@ -20,31 +21,29 @@ function updateTable() {
 
 
  async function bookNow(selectedTime) {
-    const roomNo = selectedRoom;
-    console.log($user.id);
-    const qalamID =  $user.id; // Replace with your user ID or fetch it from the user session
-    const reservationTime = selectedTime;
+  const roomNo = selectedRoom;
+  const qalamID = $user.id; // Replace with your user ID or fetch it from the user session
+  const reservationTime = selectedTime;
 
-    try {
-        const response = await fetch('http://localhost:8000/api/room', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ RoomNo: roomNo, QalamID: qalamID, ReservationTime: reservationTime }),
-      });
-      console.log(roomNo, qalamID, reservationTime);
-      if (response.ok) {
-        console.log("Room booked successfully");
-        updateTable(); // Refresh the table after booking
-      } else {
-        const errorData = await response.json();
-        console.error('Error:', errorData.error);
-      }
-    } catch (error) {
-      console.error('Error:', error);
+  try {
+    const response = await axios.post('http://localhost:8000/api/room', {
+      RoomNo: roomNo,
+      QalamID: qalamID,
+      ReservationTime: reservationTime,
+      ReservationStatus: "Unavailable",
+    });
+
+    if (response.data.message) {
+      console.log("Room booked successfully");
+      updateTable(); // Refresh the table after booking
+    } else {
+      console.error('Error:', response.data.error);
     }
+  } catch (error) {
+    console.error('Error:', error);
   }
+}
+
 </script>
 
 <main>
