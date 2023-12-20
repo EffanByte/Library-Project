@@ -89,6 +89,8 @@
         background-color: #0056b3; /* Example primary color */
         /* Additional button styling if needed */
     }
+     
+
 
     @media (max-width: 576px) {
         .card-img-top {

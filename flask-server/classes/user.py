@@ -44,3 +44,13 @@ class User:
         db_connection.commit()
         cursor.close()
 
+    @staticmethod
+    def get_user_info(user_id, db_connection):
+        # Assuming db_connection is available here, maybe passed during class instantiation
+        cursor = db_connection.cursor(dictionary = True)
+        call_proc = "CALL GetUserInfo(%s)"
+        cursor.execute(call_proc, (user_id,))
+        user_info = cursor.fetchone()
+    
+        cursor.close()
+        return user_info

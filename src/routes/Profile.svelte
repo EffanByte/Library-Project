@@ -1,36 +1,55 @@
 <script>
-    // Dummy data for demonstration
-    let userName = "John Doe";
-    let cmsId = "123456";
-    let userEmail = "johndoe@example.com";
-    let booksRead = ["Book Title 1", "Book Title 2", "Book Title 3"];
-    let booksRented = [
-        { title: "Rented Book 1", returnBy: "2023-07-20" },
-        { title: "Rented Book 2", returnBy: "2023-08-15" }
-    ];
-    let lateFees = "No pending late fees";
+    import { onMount } from 'svelte';
+    import { user } from '../components/store.js';  // Import your user store
+    import { get } from 'svelte/store';
 
-    // Functions to fetch user data, books read, rented books, etc.
-    function fetchBooksRead() {
-        // Fetch and return array of books the user has read
+    let profileData = {
+        userName: "",
+        cmsId: 0,
+        userEmail: "",
+        booksRented: [],  // Assuming you will populate this from another source
+        lateFees: ""      // Assuming you will populate this from another source
+    };
+
+    // Function to fetch user data
+    async function fetchUserData() {
+        try {
+            const loggedInUser = get(user);
+            // Make a request to your server to get user information
+            const response = await fetch(`http://localhost:8000/api/profile?id=${loggedInUser.id}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            const userData = await response.json();
+            profileData = {  // Reassign profileData to a new object to be reactive
+                userName: userData.Name,
+                cmsId: userData.QalamID,
+                userEmail: userData.Email,
+                booksRented: profileData.booksRented,  
+                lateFees: profileData.lateFees
+            };
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
-    function fetchBooksRented() {
-        // Fetch and return array of books the user is currently renting
-    }
+    onMount(() => {
+        fetchUserData();
+    });
 </script>
+
 
 <div class="container my-4">
     <div class="text-center">
-        <h3>{userName}</h3>
+        <h3>{profileData.userName}</h3>
     </div>
     <h4 class="mt-4">About Me</h4>
-    <p>CMS ID: {cmsId}</p>
-    <p>Email: {userEmail}</p>
+    <p>CMS ID: {profileData.cmsId}</p>
+    <p>Email: {profileData.userEmail}</p>
 
     <h4 class="mt-4">Currently Rented/Bought Books</h4>
     <ul class="list-group">
-        {#each booksRented as book}
+        {#each profileData.booksRented as book}
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 {book.title}
                 <span class="badge bg-primary rounded-pill">Return by: {book.returnBy}</span>
@@ -39,6 +58,6 @@
     </ul>
 
     <div class="alert alert-info mt-4" role="alert">
-        Late Fees: {lateFees}
+        Late Fees: {profileData.lateFees}
     </div>
 </div>

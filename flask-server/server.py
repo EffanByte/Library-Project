@@ -249,11 +249,21 @@ def login():
         cursor.execute('SELECT * FROM librarian WHERE Email = %s', (email,))
         user = cursor.fetchone()
         user_type = 'librarian'
+        # Fetching the ID for a librarian, for example
+        cursor.execute('SELECT LibrarianID FROM librarian WHERE Email = %s', (email,))
+        id = cursor.fetchone()
+        id = id['LibrarianID'] if id else None
+
+
         
     else:
+        # Fetching the QalamID for a user
+        cursor.execute('SELECT QalamID FROM user WHERE Email = %s', (email,))
+        id = cursor.fetchone()
+        id = id['QalamID'] if id else None
         user_type = 'user'
 
-        # Inside your login function, after you determine the user_type
+    # Inside login function, after determining the user_type
     if user:
         if user_type == 'librarian':
             cursor.execute('SELECT RoleName FROM jobrole JOIN librarian USING (LibrarianID) WHERE Email = %s', (email,))
@@ -269,11 +279,13 @@ def login():
     if user and bcrypt.checkpw(password, user['Password'].encode('utf-8')):
         # If password matches
         return jsonify({
-            'email': user['Email'],
-            'name': user['Name'],
-            'userType': user_type,
-            'role': role
-        }), 200
+        'id': id,  # Make sure 'id' is the actual ID value, not a dictionary
+        'email': user['Email'],
+        'name': user['Name'],
+        'userType': user_type,
+        'role': role  # Ensure this is a string, not a dictionary
+    }), 200
+
     else:
         # If password does not match
         return jsonify({'error': 'Invalid credentials'}), 401

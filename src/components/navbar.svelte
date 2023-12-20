@@ -2,6 +2,7 @@
     import { createEventDispatcher } from 'svelte';
     import {user, loggedIn, isLibrarian} from "./store.js";
     import { push } from 'svelte-spa-router';
+    import { onMount, onDestroy } from 'svelte';
     const dispatch = createEventDispatcher();
     
      let showDropdown = false;
@@ -29,6 +30,21 @@
     function goToLibrary(){
         push('/Librarian/');
     }
+
+    function handleOutsideClick(event) {
+        // Check if the click is outside the navbar or dropdown
+        if (showDropdown && !event.target.closest('.navbar')) {
+            toggleDropdown();
+        }
+    }
+
+    onMount(() => {
+        window.addEventListener('click', handleOutsideClick);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('click', handleOutsideClick);
+    });
 
 </script>
 
