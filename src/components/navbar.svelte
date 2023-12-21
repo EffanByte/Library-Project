@@ -27,10 +27,7 @@
     function openSignup(){
         dispatch('signup');
     }
-    function goToLibrary(){
-        push('/Librarian/');
-    }
-
+    let homepage = "/#/";
     function handleOutsideClick(event) {
         // Check if the click is outside the navbar or dropdown
         if (showDropdown && !event.target.closest('.navbar')) {
@@ -51,12 +48,17 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <!-- Logo -->
-    <a class="navbar-brand"     href="/#/">
-      Library Management
+    {#if $user.role === 'Supervisor'}
+    <a class="navbar-brand"  href= "/#/Librarian">
+      Virtual Library
     </a>
+    {:else}
+        <a class="navbar-brand"  href= "/#/">
+      Virtual Library
+    </a>
+    {/if}
 {#if $isLibrarian.is == true}
     <div class="navbar-center">
-      <button class="btn btn-primary" on:click={goToLibrary}>Go to Library</button>
     </div>
     {/if}
     {#if $loggedIn.is == true}

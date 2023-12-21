@@ -137,7 +137,7 @@ function openLastReadBookPDF() {
         {#if $user.username != ''}
         <div class="col-md-6">
             <div class="d-flex flex-column align-items-center justify-content-center mt-4 spa">
-                <img src={lastReadBookCoverImage} alt="Last Read Book" class="effimg">
+                <img src={lastReadBookCoverImage} alt="Your last Read Book Will Show up Here" class="effimg">
                 <button on:click={openLastReadBookPDF} class="btn btn-primary mt-2 mb-3">Continue Reading Last Book</button>
             </div>
         </div>

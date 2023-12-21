@@ -151,9 +151,9 @@ push(`/PDF/${bookID}`);
                 <h3>Description</h3>
                 <p>{book.Description}</p>
             </div>
-            {#if `${book.TypeID}` == 1}
+            {#if `${book.TypeID}` == 2}
             <button class="btn btn-primary" on:click={OpenModal}>Issue Book</button>
-            {:else if `${book.TypeID}` == 2}
+            {:else if `${book.TypeID}` == 1}
             <button class = "btn btn-secondary" on:click = {viewPDF}>View PDF</button>
             {/if}
         </div>

@@ -4,8 +4,9 @@
     import ScrollBar from '../components/ScrollBar.svelte';
     
 </script>
+{#if $user.role == "Supervisor"}
 <ScrollBar></ScrollBar>
-
+{/if}
     <div class="row justify-content-center mt-5 mx-auto col-10">
         <!-- Repeat this structure for each card -->
         {#if $user.role == "Supervisor" || $user.role == "Ebooks_manager" || $user.role == "Archivist" || $user.role == "Technical_Services_Librarian"}
@@ -20,7 +21,7 @@
             </div>
         </div>
         {/if}
-
+        {#if $user.role == "Supervisor" || $user.role == "Technical_Services_Librarian" || $user.role == "Ebooks_Librarian"}
         <div class="col-sm-6 col-lg-3 mb-4">
             <div class="card h-100">
                 <img src="RentMNG.png" class="card-img-top" alt="Feature">
@@ -31,6 +32,7 @@
                 </div>
             </div>
         </div>
+        {/if}
 
                 {#if $user.role == "Supervisor"}
         <div class="col-sm-6 col-lg-3 mb-4">
