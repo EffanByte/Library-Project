@@ -30,6 +30,7 @@ def get_db_connection():
         password='',
         database='virtual_library'
     )
+
 @app.route('/api/rooms', methods=['GET'])
 def get_all_rooms_from_db():
     connection = get_db_connection()
@@ -250,97 +251,6 @@ def api_update_book(book_id):
         cursor.close()
         conn.close()
 
-'''
-@app.route('/api/books/<int:book_id>', methods=['PUT'])
-def api_update_book(book_id):
-    try:
-        # Start a database transaction here if you're using a database
-
-        # Extracting text fields
-        title = request.form.get('Title')
-        genre = request.form.get('Genre')
-        description = request.form.get('Description')
-        type_id = request.form.get('TypeID')
-
-        # Extracting file fields
-        cover_image = request.files.get('coverImage')
-        pdf_file = request.files.get('PDF')
-
-        # Logic to update book details in the database
-        # update_book_details is a hypothetical function you would have to implement
-        success_details = update_book(book_id, title, genre, description, type_id, cover_image)
-
-        if not success_details:
-            raise Exception("Failed to update book details.")
-
-        # If a new PDF is provided, update it
-        if pdf_file and pdf_file.filename:
-            pdf_data = pdf_file.read()
-            # update_book_pdf is a hypothetical function you would have to implement
-            success_pdf = update_book_pdf(book_id, pdf_data)
-            
-            if not success_pdf:
-                raise Exception("Failed to update book PDF.")
-
-        # Commit the transaction here if you're using a database
-
-        return jsonify({'message': 'Book and PDF updated successfully'}), 200
-
-    except Exception as e:
-        # Rollback the transaction here if you're using a database and an error occurs
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/books/update/pdf/<int:book_id>', methods=['PUT'])
-def update_book_pdf(book_id):
-
-    try:
-        conn = get_db_connection()
-        pdf_file = request.files.get('PDF')
-
-        if pdf_file and pdf_file.filename:
-            pdf_data = pdf_file.read()
-            cursor = conn.cursor()
-            cursor.execute("UPDATE BookPDFs SET PDF = %s WHERE BookID = %s", (pdf_data, book_id))
-
-            conn.commit()
-            cursor.close()
-
-            return jsonify({"message": "PDF updated successfully"}), 200
-        else:
-            return jsonify({"error": "No PDF file provided"}), 400
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-'''
-
-# Route to sign up user using User.signup_user method in user.py
-'''
-@app.route('/api/signup', methods=['POST'])
-def api_signup():
-    try:
-        # Extract the data from the request
-        data = request.json
-        qalamId = data['QalamID']
-        email = data['Email']
-        name = data['Name']
-        password = data['Password']
-
-        # Establish a database connection
-        db_connection = get_db_connection()
-
-        # Call the signup_user method to sign up the user
-        User.signup_user(qalamId, email, name, password, db_connection)
-
-        # Close the database connection
-        db_connection.close()
-
-        # Return a success message
-        return jsonify({"message": "User signed up successfully"}), 201
-
-    except Exception as e:
-        # If an error occurs, return an error message
-        return jsonify(error=str(e)), 500    
-        '''
 
 
 
@@ -524,7 +434,8 @@ def get_all_issued_books_library():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+ 
+'''   
 @app.route('/api/all_found_items', methods=['GET'])
 def get_all_found_items():
     try:
@@ -540,7 +451,9 @@ def get_all_found_items():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+'''
 
+'''
 @app.route('/api/all_lost_items', methods=['GET'])
 def get_all_lost_items():
     try:
@@ -556,6 +469,7 @@ def get_all_lost_items():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+'''        
     
 
 @app.route('/api/reportFoundItem', methods=['POST'])
@@ -688,6 +602,79 @@ def get_complaints():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route('/api/all_found_items', methods=['GET'])
+def get_all_found_items():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Assuming you have a method in your FoundItems class to get all found items
+        found_items = FoundItems.get_all_found_items(conn)
+
+        conn.close()
+        cursor.close()
+        return jsonify(found_items), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/all_lost_items', methods=['GET'])
+def get_all_lost_items():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Assuming you have a method in your LostItems class to get all lost items
+        lost_items = LostItems.get_all_lost_items(conn)
+
+        conn.close()
+        cursor.close()
+        return jsonify(lost_items), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+# Flask server code
+
+@app.route('/api/deleteItem', methods=['DELETE'])
+def delete_item():
+    try:
+        item_id = request.args.get('id')
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Assuming you have a method to delete an item by ID
+        cursor.execute("DELETE FROM lostitems WHERE ItemID = %s", (item_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Item deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/markItemFound', methods=['POST'])
+def mark_item_found():
+    try:
+        item_id = request.args.get('id')
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+         
+
+        # Assuming you have a method to mark an item as found by ID
+        cursor.execute("INSERT INTO founditems (SELECT * FROM lostitems WHERE ItemID = %s)", (item_id,))
+        cursor.execute("DELETE FROM lostitems WHERE ItemID = %s", (item_id,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Item marked as found successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500    
 
 
 
