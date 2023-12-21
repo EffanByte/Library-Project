@@ -7,7 +7,7 @@
     // Function to fetch all issued books from the library
     const fetchIssuedBooksLibrary = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/all_issued_books_library}');
+        const response = await fetch('http://localhost:8000/api/allIssuedBooksLibrary}');
         if (!response.ok) {
           throw new Error('Failed to fetch issued books data');
         }
