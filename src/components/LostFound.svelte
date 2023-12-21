@@ -155,7 +155,7 @@
         <label for="DateReported1">Date Reported:</label>
         <input type="date" bind:value={foundDateReported} id="DateReported1" required>
 
-        <button type="submit">Report Found Item</button>
+        <button type="submit" class = "btn" >Report Found Item</button>
       </form>
 
       <form on:submit|preventDefault={reportLostItem}>
@@ -165,7 +165,7 @@
         <label for="DateReported2">Date Reported:</label>
         <input type="date" bind:value={lostDateReported} id="DateReported2" required>
 
-        <button type="submit">Report Lost Item</button>
+        <button type="submit" class = "btn" >Report Lost Item</button>
       </form>
     </section>
   </div>cd 
@@ -251,4 +251,15 @@
     font-size: 16px;
     color: #777; /* Light text color */
   }
+
+  .btn {
+    background-color: #e4dbdb;
+      font-size: 14;
+      margin: 10px;
+      width: 160px; /* Adjust the width as needed */
+  }
+  .btn:hover {
+  background-color: #0056b3;
+}
+
 </style>

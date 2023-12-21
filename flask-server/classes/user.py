@@ -43,7 +43,7 @@ class User:
         cursor.execute(query, values)
         db_connection.commit()
         cursor.close()
-
+    '''
     @staticmethod
     def get_user_info(user_id, db_connection):
         # Assuming db_connection is available here, maybe passed during class instantiation
@@ -51,7 +51,32 @@ class User:
         call_proc = "CALL GetUserInfo(%s)"
         cursor.execute(call_proc, (user_id,))
         user_info = cursor.fetchone()
-    
+
+        if not user_info:
+            print("before librarian query")
+            # User not found in users table, check librarian table
+            cursor.execute("SELECT * FROM librarian WHERE LibrarianID = %s", (user_id,))
+            print("after librarian query")
+            user_info = cursor.fetchone()
+
+        print(user_info)
+        cursor.close()
+        return user_info
+    '''
+
+    @staticmethod
+    def get_user_info(user_id, db_connection):
+        cursor = db_connection.cursor(dictionary=True)
+        call_proc = "CALL GetUserInfo(%s)"
+        cursor.execute(call_proc, (user_id,))
+        user_info = cursor.fetchone()
+
+        if not user_info:
+            # User not found in users table, check librarian table
+            call_proc = "Call getLibrarianInfo(%s)"
+            cursor.execute(call_proc, (user_id,))
+            user_info = cursor.fetchone()
+
         cursor.close()
         return user_info
     
