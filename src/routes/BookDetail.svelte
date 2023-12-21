@@ -5,7 +5,6 @@
     import { push, params,  } from 'svelte-spa-router';
     import axios from 'axios';  // assuming axios is installed, otherwise use fetch
     import { selectedBookID, user, loggedIn } from '../components/store.js';
-    import Login from '../components/Login.svelte';
     let renting = false;
     let selectedDuration = '';
     let rentAmount = 0;

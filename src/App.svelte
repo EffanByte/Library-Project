@@ -22,6 +22,7 @@
     import Complaint from './components/Complaint.svelte';
     import RoomUser from './components/Room.svelte'
     import LostFound from './components/LostFound.svelte';
+    import ComplaintManage from './routes/ComplaintManage.svelte';
     const routes = {
 
         '/': Home,
@@ -31,13 +32,14 @@
         '/Librarian/UserManagement': UserManage,
         '/Librarian/RoomManagement': RoomManage,
         '/Librarian/RentManagement': RentManage,
+        '/Librarian/ComplaintManagement': ComplaintManage,
         '/User/:user': Profile,
         '/PDF/:typeID': BookPDF,
         '/UserHome/:user': Home,
         '/Catalogue': Catalogue,
         '/Complaint': Complaint,
         '/Room': RoomUser,
-        '/LostFound': LostFound
+        '/LostFound': LostFound,        
     };
     let showLogin = false;
     let showSignup = false;
