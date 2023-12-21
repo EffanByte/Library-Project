@@ -6,8 +6,8 @@ class IssuedBooks:
         self.job_id = job_id
         self.db_connection = db_connection
 
-    def issue_book(self, qalam_id, book_id, job_id):
-        call_proc = "CALL IssueBook(%s, %s, %s)"
+    def issue_book(self, qalam_id, book_id, job_id, due_date):
+        call_proc = "CALL IssueBook(%s, %s, %s, %s)"
         values = (qalam_id, book_id, job_id)
         self.db_connection.cursor.execute(call_proc, values)
         self.db_connection.conn.commit()

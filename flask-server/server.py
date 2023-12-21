@@ -443,18 +443,50 @@ def get_all_issued_books_library():
         # Create a cursor
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-
         # Call the MySQL stored procedure
-        issuedbookInfo=IssuedBooks.GetAllIssuedBooksLibrary(conn)
+        cursor.execute("SELECT * FROM issuedbooks")
+        issuedbooksInfo = cursor.fetchall()
+        print(issuedbooksInfo)
         cursor.close()
         conn.close()
         
        
-        return jsonify(issuedbookInfo), 200
+        return jsonify(issuedbooksInfo), 200
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
  
+@app.route('/api/issueBook', methods=['POST'])
+def issue_book():
+    try:
+        # Assuming you have a method to get the database connection
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming your books table has IssuedID, QalamID, BookID, JobID, and DueDate columns
+        data = request.get_json()
+        print(data)
+        qalam_id = data.get('QalamID')
+        book_id = data.get('BookID')
+        job_id = data.get('JobID')
+        due_date = data.get('DueDate')
+
+        # Assuming your procedure for issuing a book is named "IssueBook"
+        cursor.execute("SELECT * FROM issuedbooks WHERE QalamID = %s AND BookID = %s", (qalam_id, book_id))
+        existing_issue = cursor.fetchone()
+
+        if existing_issue:
+            return jsonify("User has already issued this book."), 400
+        cursor.execute("INSERT INTO issuedbooks (QalamID, BookID, JobID, DueDate) VALUES (%s,%s,%s,%s)", (qalam_id, book_id, job_id, due_date,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify("Book issued successfully."), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 '''   
 @app.route('/api/all_found_items', methods=['GET'])
 def get_all_found_items():

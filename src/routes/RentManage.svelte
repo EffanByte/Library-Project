@@ -3,7 +3,6 @@
   import { get } from 'svelte/store';
 
   let issuedBooks = [];
-
   // Function to fetch all issued books from the library
   const fetchIssuedBooksLibrary = async () => {
     try {
@@ -18,8 +17,20 @@
   };
 
   // Fetch issued books when the component is mounted
-  onMount(() => {
-    fetchIssuedBooksLibrary();
+  onMount(async () => {
+    try {
+      fetchIssuedBooksLibrary();
+      // For each issued book, fetch the title from the books table
+      for (let i = 0; i < issuedBooks.length; i++) {
+        const bookID = issuedBooks[i].BookID;
+        const bookResponse = await axios.get(`http://localhost:8000/api/books/${bookID}`);
+        const bookTitle = bookResponse.data.Title;
+        // Add the Title attribute to the issuedBooks array
+        issuedBooks[i].Title = bookTitle;
+      }
+    } catch (error) {
+      console.error('Error fetching issued books:', error);
+    }
   });
 
   </script>
@@ -27,7 +38,7 @@
     <div class="container h-100">
       <div class="heading">Issued Books from the Library</div>
   
-      {#if issuedBooks.length > 0}
+      {#if issuedBooks.length> 0}
         <ul class="issued-books-list">
           {#each issuedBooks as { BookID, Title, IssuedBy }}
             <li class="issued-book" key={BookID}>
