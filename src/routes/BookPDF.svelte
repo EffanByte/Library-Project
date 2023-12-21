@@ -1,11 +1,18 @@
 <script>
     import { onMount } from 'svelte';
-    import PDFObject from "pdfobject";
+    import PDFObject from 'pdfobject';
+    import { pdfDataStore } from "../components/store.js";
 
-    onMount(() => {
-        console.log(PDFObject.pdfobjectversion);
-        PDFObject.embed("Assignment 2.pdf", ".container"); //placeholder values
+let pdfDataUri;
+
+onMount(() => {
+    pdfDataStore.subscribe(data => {
+        if (data) {
+            pdfDataUri = `data:application/pdf;base64,${data}`;
+            PDFObject.embed(pdfDataUri, '.container');
+        }
     });
+});
 </script>
 
 <div class = container ></div>

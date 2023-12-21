@@ -9,3 +9,4 @@ export const selectedBookID = writable(null);
 export const isLibrarian = writable({ is: true });
 export const backgroundColor = writable('lightgreen');
 export const userroles = writable("guest");
+export const pdfDataStore = writable('');

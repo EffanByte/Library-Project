@@ -24,6 +24,7 @@
     import LostFound from './components/LostFound.svelte';
     import ComplaintManage from './routes/ComplaintManage.svelte';
     import LostFoundLibrarian from './routes/LostFoundManage.svelte';
+
     const routes = {
 
         '/': Home,
@@ -41,7 +42,8 @@
         '/Complaint': Complaint,
         '/Room': RoomUser,
         '/LostFound': LostFound,     
-        '/Librarian/LostAndFoundManagement': LostFoundLibrarian,   
+        '/Librarian/LostAndFoundManagement': LostFoundLibrarian, 
+        '/BookPDF': BookPDF,  
     };
     let showLogin = false;
     let showSignup = false;
