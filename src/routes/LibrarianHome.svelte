@@ -69,6 +69,20 @@
             </div>
         </div>
         {/if}
+
+        
+        {#if $user.role == "Supervisor" || $user.role == "Technical_Services_Librarian"}
+        <div class="col-sm-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <img src="lostfnd.jpg" class="card-img-top" alt="Feature">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Lost and Found</h5>
+                    <p class="card-text flex-grow-1">Manage Lost and Found items here</p>
+                    <a href={`/Librarian/LostAndFoundManagement/`} class="btn btn-primary mt-2 align-self-start" use:link>Click Here</a>
+                </div>
+            </div>
+        </div>
+        {/if}
     </div>
     
 <style>
