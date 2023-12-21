@@ -4,7 +4,6 @@
   let complaints = [];
   let selectedComplaint = null;
   let isModalOpen = false;
-    const dispatch = createEventDispatcher();
 
   onMount(async () => {
     try {
@@ -28,16 +27,27 @@
     selectedComplaint = null;
     isModalOpen = false; // Set the flag to close the modal
   }
-    async function markAsResolved() {
+async function markAsResolved() {
+  try {
     // Call your backend API to mark the complaint as resolved
-    // Example: await fetch(`http://localhost:8000/api/markAsResolved?id=${selectedComplaint.id}`, { method: 'POST' });
+        const response = await fetch(`http://localhost:8000/api/deletecomplaints?id=${selectedComplaint.complaintID}`, {
+          method: 'DELETE',
+        });
+  
 
-    // Remove the complaint from the local list
+    // If the API call is successful, remove the complaint from the local list
     complaints = complaints.filter(c => c.id !== selectedComplaint.id);
 
     // Close the modal
     closeModal();
+  } catch (error) {
+    console.error('Error marking complaint as resolved:', error);
+    // Handle error (display a message, log, etc.)
   }
+}
+
+
+
 </script>
 
 {#if isModalOpen}
@@ -68,7 +78,7 @@
       <div class="card-body">
         {#if complaints.length > 0}
           <ul class="list-group">
-            {#each complaints as complaint (complaint.id)}
+            {#each complaints as complaint}
               <li class="list-group-item" on:click={() => openModal(complaint)}>
                 {complaint.complaint_description}
               </li>

@@ -31,6 +31,26 @@ def get_db_connection():
         database='virtual_library'
     )
 
+@app.route('/api/deletecomplaints', methods=['DELETE'])
+def delete_complaint():
+    try:
+        # Assuming you have a method to get the database connection
+        complaint_id = request.args.get('id')
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming your complaints table has complaintID and complaint_description columns
+        cursor.execute("DELETE FROM complaints WHERE complaintID = %s", (complaint_id,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify("Complaint resolved successfully."), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/rooms', methods=['GET'])
 def get_all_rooms_from_db():
     connection = get_db_connection()
@@ -571,9 +591,10 @@ def submit_complaint():
 
         conn = get_db_connection()
         cursor = conn.cursor()
-
+        print(userID)
+        print(complaint_details)
         # Insert the complaint data into the database
-        cursor.execute("INSERT INTO complaints (complaint_description,QalamID) VALUES (%s,%s)", (complaint_details,userID,))
+        cursor.execute("INSERT INTO complaints (complaintID, complaint_description) VALUES (%s,%s)", (userID, complaint_details))
         conn.commit()
 
         cursor.close()

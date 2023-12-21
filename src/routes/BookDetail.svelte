@@ -5,9 +5,9 @@
     import { push, params,  } from 'svelte-spa-router';
     import axios from 'axios';  // assuming axios is installed, otherwise use fetch
     import { selectedBookID, user, loggedIn } from '../components/store.js';
-    let renting = false;
+    let issueing = false;
     let selectedDuration = '';
-    let rentAmount = 0;
+    let issueAmount = 0;
     let fineMessage = '';
     let book = null;
     let delay=''
@@ -34,9 +34,9 @@ selectedBookID.subscribe(value => {
 push(`/PDF/${bookID}`);
     }
 
-    function rentBook() {
+    function OpenModal() {
         if ($loggedIn.is == true){
-        renting = true;
+        issueing = true;
         }
         else
         alert("Please log in to borrow a book");
@@ -44,25 +44,28 @@ push(`/PDF/${bookID}`);
 
     function handleDurationSelection(event) {
         selectedDuration = event.target.value;
-        // Calculate rent amount and fine message based on the selected duration
+        // Calculate issue amount and fine message based on the selected duration
         // This is a placeholder, replace with actual calculation logic
         if (selectedDuration === '1 week') {
-            rentAmount = 5;
+            issueAmount = 5;
             fineMessage = 'Fine: $10 if late.';
         } else if (selectedDuration === '2 weeks') {
-            rentAmount = 30;
+            issueAmount = 30;
             fineMessage = 'Fine: $30 if late.';
         } else if (selectedDuration === '1 month') {
-            rentAmount = 50;
+            issueAmount = 50;
             fineMessage = 'Fine: $50 if late.';
         } else if (selectedDuration === '3 months') {
-            rentAmount = 100;
+            issueAmount = 100;
             fineMessage = 'Fine: $100 if late.';
         }
 
+    async function IssueBook(){
+        
+    }
 
     }
-/*function displayRent(){
+/*function displayIssue(){
      if (delay === 'one week') {
            
             fineMessage = 'Fine: $10 if late.';
@@ -78,9 +81,9 @@ push(`/PDF/${bookID}`);
         }
 }*/
     function closePopup() {
-        renting = false;
+        issueing = false;
         selectedDuration = '';
-        rentAmount = 0;
+        issueAmount = 0;
         fineMessage = '';
     }
 
@@ -117,7 +120,7 @@ push(`/PDF/${bookID}`);
                 <p>{book.Description}</p>
             </div>
             {#if `${book.TypeID}` == 1}
-            <button class="btn btn-primary" on:click={rentBook}>Rent Book</button>
+            <button class="btn btn-primary" on:click={OpenModal}>Issue Book</button>
             {:else if `${book.TypeID}` == 2}
             <button class = "btn btn-secondary" on:click = {viewPDF}>View PDF</button>
             {/if}
@@ -126,13 +129,13 @@ push(`/PDF/${bookID}`);
         <p>Loading...</p>
     {/if}
 
-    <!-- Renting modal section -->
-    {#if renting}
+    <!-- Issueing modal section -->
+    {#if issueing}
     <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Rent Book</h5>
+                    <h5 class="modal-title">Issue Book</h5>
                     <button type="button" class="close" on:click={closePopup}>
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -147,13 +150,13 @@ push(`/PDF/${bookID}`);
                         <option value="three months">three months</option>
                     </select>
                     {#if selectedDuration}
-                        <p>Rent amount: ${rentAmount}</p>
+                        <p>Issue amount: ${issueAmount}</p>
                         <p>{fineMessage}</p>
                     {/if}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" on:click={closePopup}>Close</button>
-                    <button type="button" class="btn btn-primary" disabled={!selectedDuration}>Rent</button>
+                    <button type="button" class="btn btn-primary" disabled={!selectedDuration} onclick = {IssueBook}>Issue</button>
                 </div>
             </div>
         </div>
