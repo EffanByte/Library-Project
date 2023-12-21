@@ -9,7 +9,17 @@ class FoundItems:
         self.db_connection = db_connection
 
     def report_found_item(self, qalam_id, item_description, date_reported):
-        query = "INSERT INTO FoundItems (QalamID, ItemDescription, DateReported) VALUES (%s, %s, %s)"
+        call_proc = "CALL ReportFoundItem(%s, %s, %s)"
         values = (qalam_id, item_description, date_reported)
-        self.db_connection.cursor.execute(query, values)
+        self.db_connection.cursor.execute(call_proc, values)
         self.db_connection.conn.commit()
+    @staticmethod
+    def get_all_found_items(db_connection):
+        cursor = db_connection.cursor(dictionary=True)
+        call_proc = "CALL GetAllFoundItems()"
+        cursor.execute(call_proc)
+        found_items = cursor.fetchall()
+        cursor.close()
+        return found_items
+    
+    

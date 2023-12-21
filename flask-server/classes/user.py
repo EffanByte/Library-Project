@@ -54,3 +54,15 @@ class User:
     
         cursor.close()
         return user_info
+    
+    @staticmethod
+    def get_all_users_info(db_connection):
+   
+        cursor = db_connection.cursor(dictionary=True)
+        call_proc = "CALL GetAllUsersInfo()"
+        cursor.execute(call_proc)
+        users_info = cursor.fetchall()
+        print(users_info)
+
+        cursor.close()
+        return users_info

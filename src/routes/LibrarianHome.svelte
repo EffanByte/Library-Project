@@ -64,6 +64,7 @@
     .card {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
         border-radius: 10px; /* Rounded corners */
+        transition: transform 0.3s ease-in-out;
     }
 
     .card-img-top {
@@ -84,6 +85,13 @@
     .card-text {
         font-size: 0.9rem; /* Consistent text size */
     }
+
+   
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
 
     .btn-primary {
         background-color: #0056b3; /* Example primary color */

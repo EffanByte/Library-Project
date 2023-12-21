@@ -1,7 +1,8 @@
 <script>
     import { onMount } from 'svelte';
     import { push } from "svelte-spa-router";
-    import {user } from "../components/store.js";
+    import {user, loggedIn } from "../components/store.js";
+    import { createEventDispatcher } from 'svelte';
 
 
     let greeting;
@@ -21,17 +22,35 @@
         }
     }
 
-function gotoCatalogue(){
+function gotoCatalogue()
+{
     push("/Catalogue");
 }
 function gotoRoom(){
-    push("/Room");
+    //push("/Room");
+    if ($user.username) 
+    {
+        push("/Room");
+    }
+    else
+    {
+        alert("Please sign in first!");
+    }
 }
 function gotoLost(){
     push("/LostFound");
+ 
 }
 function gotoComplaint(){
-    push("/Complaint");
+    if ($user.username) 
+    {
+        push("/Complaint")
+    }
+    else
+    {
+        alert("Please sign in first!");
+    }
+    
 }
 </script>
 

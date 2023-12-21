@@ -1,23 +1,75 @@
-<!-- LostFound.svelte -->
-
 <script>
   import { onMount } from 'svelte';
+  import { user } from '../components/store.js';
+  import { get } from 'svelte/store';
 
+  let foundItems = [];
   let lostItems = [];
+  let newItemDescription = '';
+  let newDateReported = '';
 
-  // Simulate fetching data from a server
-  const fetchLostItems = async () => {
-    // Make a fetch request to your server or API
-    // Replace this with actual API endpoint
-    const response = await fetch('/api/lostitems');
-    const data = await response.json();
-
-    // Update lostItems with the retrieved data
-    lostItems = data;
+  // Function to fetch all found items
+  const fetchFoundItems = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/all_found_items');
+      if (!response.ok) {
+        throw new Error('Failed to fetch found items data');
+      }
+      foundItems = await response.json();
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
-  // Fetch lost items when the component is mounted
+  // Function to fetch all lost items
+  const fetchLostItems = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/all_lost_items');
+      if (!response.ok) {
+        throw new Error('Failed to fetch lost items data');
+      }
+      lostItems = await response.json();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const reportItem = async (type) => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/report_${type}_item`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          qalam_id: get(user).qalam_id,
+          item_description: newItemDescription,
+          date_reported: newDateReported,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to report ${type} item`);
+      }
+
+      // Refresh the items after reporting
+      if (type === 'found') {
+        fetchFoundItems();
+      } else {
+        fetchLostItems();
+      }
+
+      // Clear the input fields
+      newItemDescription = '';
+      newDateReported = '';
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  // Fetch found and lost items when the component is mounted
   onMount(() => {
+    fetchFoundItems();
     fetchLostItems();
   });
 </script>
@@ -26,26 +78,68 @@
   <div class="container h-100">
     <div class="heading">Lost and Found</div>
 
-    <section class="lost-items-section">
-      <h1 class="section-title">Lost and Found Items</h1>
+    <!-- Found Items Section -->
+    <section class="found-items-section">
+      <h1 class="section-title">Found Items</h1>
 
-      {#if lostItems.length > 0}
-        <ul class="lost-items-list">
-          {#each lostItems as { id, ItemDescription, DateLost }}
-            <li class="lost-item" key={id}>
+      {#if foundItems.length > 0}
+        <ul class="found-items-list">
+          {#each foundItems as { ID, QalamID, ItemDescription, DateReported }}
+            <li class="found-item" key={ID}>
+              <div class="QalamID">{QalamID}</div>
               <div class="item-description">{ItemDescription}</div>
-              <div class="date-lost">Date Lost: {DateLost}</div>
+              <div class="date-reported">Date Reported: {DateReported}</div>
             </li>
           {/each}
         </ul>
       {:else}
-        <p class="no-items-message">No lost items found.</p>
+        <p class="no-items-message">No found items reported.</p>
       {/if}
+      <p>{JSON.stringify(foundItems)}</p>
     </section>
 
-    <section class="additional-info">
-      <h2 class="additional-title">Look at our Lost & Found!</h2>
-      <p class="additional-text">Visit the librarian if you find something that belongs to you!</p>
+    <!-- Lost Items Section -->
+    <section class="lost-items-section">
+      <h1 class="section-title">Lost Items</h1>
+
+      {#if lostItems.length > 0}
+        <ul class="lost-items-list">
+          {#each lostItems as { ID, QalamID, ItemDescription, DateReported }}
+            <li class="lost-item" key={ID}>
+              <div class="QalamID">{QalamID}</div>
+              <div class="item-description">{ItemDescription}</div>
+              <div class="date-reported">Date Reported: {DateReported}</div>
+            </li>
+          {/each}
+        </ul>
+      {:else}
+        <p class="no-items-message">No lost items reported.</p>
+      {/if}
+      <p>{JSON.stringify(lostItems)}</p>
+    </section>
+
+    <!-- Report Item Section -->
+    <section class="report-item-section">
+      <h2 class="additional-title">Report a Lost or Found Item</h2>
+      <form on:submit|preventDefault={() => reportItem('found')}>
+        <label for="newItemDescription">Item Description:</label>
+        <input type="text" bind:value={newItemDescription} id="newItemDescription" required>
+
+        <label for="newDateReported">Date Reported:</label>
+        <input type="date" bind:value={newDateReported} id="newDateReported" required>
+
+        <button type="submit">Report Found Item</button>
+      </form>
+
+      <form on:submit|preventDefault={() => reportItem('lost')}>
+        <label for="newItemDescription">Item Description:</label>
+        <input type="text" bind:value={newItemDescription} id="newItemDescription" required>
+
+        <label for="newDateReported">Date Reported:</label>
+        <input type="date" bind:value={newDateReported} id="newDateReported" required>
+
+        <button type="submit">Report Lost Item</button>
+      </form>
     </section>
   </div>
 </main>
@@ -56,7 +150,7 @@
     padding: 40px 0;
   }
 
-  .container-me{
+  .container-me {
     max-width: 800px;
     margin: 0 auto;
     background-color: white;
@@ -70,7 +164,9 @@
     color: #333; /* Dark text color */
   }
 
-  .lost-items-section {
+  .found-items-section,
+  .lost-items-section,
+  .report-item-section {
     margin-bottom: 40px;
   }
 
@@ -81,11 +177,13 @@
     margin-bottom: 20px;
   }
 
+  .found-items-list,
   .lost-items-list {
     list-style: none;
     padding: 0;
   }
 
+  .found-item,
   .lost-item {
     background-color: #f9f9f9; /* Light background color for each item */
     border-radius: 8px;
@@ -101,7 +199,7 @@
     color: #333; /* Dark text color */
   }
 
-  .date-lost {
+  .date-reported {
     font-size: 14px;
     color: #666; /* Medium text color */
   }
