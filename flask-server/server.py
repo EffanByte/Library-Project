@@ -14,6 +14,7 @@ from classes.IssuedBooks import *
 from classes.complaints import *
 from datetime import datetime
 import re
+import base64
 
 
 app = Flask(__name__)
@@ -393,6 +394,29 @@ def get_all_users():
         return jsonify({'error': str(e)}), 500
     
 
+@app.route('/api/profile', methods=['GET'])
+def get_profile():
+    user_id = request.args.get('id')  # Get the user ID from query parameter
+    #print("User ID getting obtained:", user_id)
+    if not user_id:
+        return jsonify({'error': 'Missing user ID'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming you have a method in your User class to get profile info
+        profile_info = User.get_user_info(int(user_id), conn)
+        #print(profile_info)
+
+
+        cursor.close()
+        conn.close()
+        return jsonify(profile_info), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 '''@app.route('/api/all_issued_books_library', methods=['GET'])
 def get_all_issued_books_library():
     try:
@@ -676,7 +700,37 @@ def mark_item_found():
     except Exception as e:
         return jsonify({'error': str(e)}), 500    
 
+@app.route('/api/getLastBookRead', methods=['GET'])
+def get_last_book_read():
+    qalam_id = request.args.get('id', type=int)  # Parse ID as an integer
+    if not qalam_id:
+        return jsonify({'error': 'Missing ID'}), 400
 
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        print("connection made")
+        call_proc = "CALL getLastBookRead(%s)"
+       
+        cursor.execute(call_proc, (qalam_id,))
+        last_book_read = cursor.fetchone()
+        print("procedure called")
+
+        if last_book_read and last_book_read['coverImage']:
+            if last_book_read.get('coverImage'):
+                last_book_read['coverImage'] = base64.b64encode(last_book_read['coverImage']).decode('utf-8')
+            if last_book_read.get('PDF'):
+                last_book_read['PDF'] = base64.b64encode(last_book_read['PDF']).decode('utf-8')
+        return jsonify(last_book_read), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 # running the flask server    
 if __name__ == '__main__':
