@@ -1,7 +1,7 @@
 <script>
   import BookCard from "./BookCard.svelte";
-  import Select from "svelte-select";
-  import { goto } from "$app/navigation";
+  import {push} from 'svelte-spa-router';
+  import {selectedBookID} from "../components/store.js";
   let books = [];
   let currentPage = 1;
   const booksPerPage = 5;
@@ -76,7 +76,6 @@
   $: {
     // This reactive statement will re-run whenever sortTrigger changes
     // It ensures that the books are re-rendered when the sorting function is applied
-    console.log("Re-rendering books:", books);
   }
   // Update searchResults based on the searchQuery
   $: searchResults = books
@@ -84,42 +83,32 @@
       book.Title.toLowerCase().includes(searchQuery.toLowerCase()),
     )
     .slice(0, 5);
-  function handleSearchResultClick(book) {
-    // Navigate to the book details page or perform any other action
-    goto(`/book/${book.BookID}`);
-  }
-  console.log(searchResults);
+    function navigateToBook(bookID) {
+        selectedBookID.set(bookID); // TEMPORARY WORKAROUND TO MAKE BookDetail.svelte work
+        push(`/book/${bookID}`);
+
+    }
 </script>
 
 <main>
   <div class="heading">Browse The Catalogue here</div>
 
   <div class="container sort">
-    <div class="dropdown">
-      <button
-        class="btn btn-secondary dropdown-toggle"
-        type="button"
-        id="dropdownMenuButton"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
+<div class="custom-dropdown">
+    <span class="dropdown-text">Sort By</span>
+    <div class="dropdown-content">
+      <select
+        bind:value={selectedSortOption}
+        on:change={sortBooks}
+        class="form-select"
       >
-        Sort By
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li>
-          <select
-            bind:value={selectedSortOption}
-            on:change={sortBooks}
-            class="form-select"
-          >
-            <option value="">-- Select an option --</option>
-            <option value="name">Name</option>
-            <option value="author">Author</option>
-            <option value="genre">Genre</option>
-          </select>
-        </li>
-      </ul>
+        <option value="">-- Select an option --</option>
+        <option value="name">Name</option>
+        <option value="author">Author</option>
+        <option value="genre">Genre</option>
+      </select>
     </div>
+  </div>
 
     <!-- Search Bar -->
     <div class>
@@ -133,16 +122,18 @@
       />
     </div>
 
-    <!-- Search Results Dropdown -->
-    {#if searchResults.length > 0}
-      <Select
-        label="Search Results"
-        value={null}
-        items={searchResults}
-        labelField="Title"
-        on:change={({ detail }) => handleSearchResultClick(detail.value)}
-      />
-    {/if}
+<!-- Search Results Dropdown -->
+{#if searchQuery !== '' && searchResults.length > 0}
+  <div class="search-results">
+    {#each searchResults as search}
+      <div class="search-result">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <div on:click={navigateToBook(search.BookID)}>{search.Title}</div>
+      </div>
+    {/each}
+  </div>
+{/if}
+
     <!-- Add a filter icon later-->
     <!-- Horizontal Divider -->
     <hr class="my-4" />
@@ -192,3 +183,24 @@
     </nav>
   </div>
 </main>
+
+<style>
+  .custom-dropdown {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+  }
+
+  .custom-dropdown:hover .dropdown-content {
+    display: block;
+  }
+</style>
