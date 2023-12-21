@@ -123,41 +123,45 @@ def add_pdf_to_book(book_id, pdf_data):
     cursor.close()
     conn.close()
 
-
-
 def update_book(book_id, book_data):
-    conn = get_db_connection()
-    cursor = conn.cursor()
+    try:
+        conn = get_db_connection()
+        with conn.cursor() as cursor:
+            query = """
+            UPDATE books
+            SET Title = %s, Author = %s, Description = %s, Genre = %s, TypeID = %s
+            WHERE BookID = %s
+            """
+            values = (book_data['Title'], book_data['Author'], book_data['Description'], book_data['Genre'], book_data['TypeID'], book_id)
+            cursor.execute(query, values)
+            affected_rows = cursor.rowcount
 
-    # Prepare the update query
-    query = """
-    UPDATE books
-    SET Title = %s, Author = %s, Description = %s, Genre = %s, TypeID = %s
-    WHERE BookID = %s
-    """
-    values = (book_data['Title'], book_data['Author'], book_data['Description'], book_data['Genre'], book_data['TypeID'], book_id)
+            # If there's a new PDF, update it
+            if 'PDF' in book_data and book_data['PDF']:
+                update_pdf_for_book(book_id, book_data['PDF'])
 
-    cursor.execute(query, values)
-    affected_rows = cursor.rowcount
+            conn.commit()
 
-    update_pdf_for_book(book_id, book_data)
-
-    conn.commit()
-    cursor.close()
-    conn.close()
-
-    return affected_rows > 0
+        return affected_rows > 0
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+    finally:
+        conn.close()
 
 
-def update_pdf_for_book(book_id, pdf_data):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    query = "UPDATE BookPDFs SET PDF = %s WHERE BookID = %s"
-    cursor.execute(query, (pdf_data, book_id))
-    conn.commit()
-    cursor.close()
-    conn.close()    
-
+def update_pdf_for_book(book_id, pdf_file):
+    try:
+        conn = get_db_connection()
+        with conn.cursor() as cursor:
+            pdf_data = pdf_file.read()  # Assuming pdf_file is a file object
+            query = "UPDATE BookPDFs SET PDF = %s WHERE BookID = %s"
+            cursor.execute(query, (pdf_data, book_id))
+            conn.commit()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        conn.close()
 
 
 # Function to manually insert an image of book cover into the database
