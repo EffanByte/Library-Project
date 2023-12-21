@@ -1,8 +1,10 @@
 <script>
   import { onMount } from 'svelte';
-  import { push } from 'svelte-spa-router';
-
+  import { createEventDispatcher } from 'svelte';
   let complaints = [];
+  let selectedComplaint = null;
+  let isModalOpen = false;
+    const dispatch = createEventDispatcher();
 
   onMount(async () => {
     try {
@@ -18,9 +20,45 @@
     }
   });
 
+  function openModal(complaint) {
+    selectedComplaint = complaint;
+    isModalOpen = true; // Set the flag to open the modal
+  }
+    function closeModal() {
+    selectedComplaint = null;
+    isModalOpen = false; // Set the flag to close the modal
+  }
+    async function markAsResolved() {
+    // Call your backend API to mark the complaint as resolved
+    // Example: await fetch(`http://localhost:8000/api/markAsResolved?id=${selectedComplaint.id}`, { method: 'POST' });
 
+    // Remove the complaint from the local list
+    complaints = complaints.filter(c => c.id !== selectedComplaint.id);
+
+    // Close the modal
+    closeModal();
+  }
 </script>
 
+{#if isModalOpen}
+<div class="modal show" tabindex="-1" role="dialog" style="display: block;">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Complaint Details</h5>
+          <button type="button" class="close" aria-label="Close" on:click={() => selectedComplaint = null}>
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{selectedComplaint.complaint_description}</p>
+          <button class="btn btn-danger" on:click={markAsResolved}>Mark as Resolved</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-backdrop show"></div>
+  {/if}
 <div class="row justify-content-center mt-5">
   <div class="col-md-8">
     <div class="card">
@@ -31,7 +69,7 @@
         {#if complaints.length > 0}
           <ul class="list-group">
             {#each complaints as complaint (complaint.id)}
-              <li class="list-group-item" >
+              <li class="list-group-item" on:click={() => openModal(complaint)}>
                 {complaint.complaint_description}
               </li>
             {/each}
@@ -46,9 +84,35 @@
 
 <style>
   /* Additional CSS for the red pastel background */
-  body {
-    background-color: #F5A9A9; /* Red pastel background color */
-  }
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1050;
+        display: none;
+        overflow: hidden;
+        outline: 0;
+    }
+
+    .show {
+        display: block;
+    }
+
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1040;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        opacity: .5;
+    }
+    button {
+        margin-top: 10px;
+    }
 
   /* Additional CSS for the card styling */
   .card {

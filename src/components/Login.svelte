@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from "svelte";
-    import { loggedIn, user, isLibrarian } from './store.js';
+    import { loggedIn, user} from './store.js';
     import { push } from 'svelte-spa-router';
     import axios from 'axios';
 
