@@ -1,20 +1,28 @@
 <!-- RoomManage.svelte -->
 
 <script>
+  import axios from 'axios';
    import { onMount } from 'svelte';
   let selectedRoom = null;
-
-  let rooms = [
-    { id: 1, name: 'Room 101', bookedTimings: ['11:00 AM', '2:00 PM', '4:00 PM'], bookedBy: ['UserA', 'UserB', 'UserC'] },
-    { id: 2, name: 'Room 102', bookedTimings: ['10:00 AM', '3:00 PM', '5:00 PM'], bookedBy: ['UserX', 'UserY', 'UserZ'] },
-    // Add more rooms with their bookedTimings and bookedBy as needed
-  ];
+  let selectedDate = null; // Add a variable to store the selected date
+let rooms = [];
 
   const timeSlots = [
-    '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM',
-    '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM', '8:00 PM', '9:00 PM', '10:00 PM'
+    '9:00:00', '10:00:00', '11:00:00', '12:00:00', '13:00:00', '14:00:00',
+    '15:00:00', '16:00:00', '17:00:00', '18:00:00', '19:00:00', '20:00:00', '21:00:00', '22:00:00'
   ];
 
+
+  
+  function getNext7Days() {
+    const today = new Date();
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      updateTable();
+      return date.toISOString().split('T')[0];
+    });
+  }
   function updateTable() {
     // Logic to update the table based on the selected room
   }
@@ -57,9 +65,44 @@
     }
   }
 
- onMount(() => {
-    // You can use onMount to load initial data or perform actions when the component is mounted.
+  let hasMounted = false; // Add a variable to check if the component has mounted
+  // Initialize the selectedDate with today's date
+  onMount(async () => {
+    // Fetch rooms data from the API only once when the component mounts
+    if (!hasMounted) {
+      try {
+        const response = await axios.get('http://localhost:8000/api/rooms');
+        rooms = response.data; // Assuming the API response contains an array of room data
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+      }
+
+      // Initialize the selectedDate with today's date
+      const today = new Date().toISOString().split('T')[0];
+      selectedDate = today;
+      console.log(selectedDate);
+      console.log(rooms)
+      // Set hasMounted to true to prevent further calls to onMount
+      hasMounted = true;
+    }
   });
+function TimeBooked(roomNo, selectedDate, selectedTime) {
+    const selectedRoomData = rooms.filter(room => room.RoomNo == roomNo);
+
+    const bookedUser = selectedRoomData.find(room => {
+        const reservationDateTime = new Date(room.ReservationTime);
+        const formattedReservationDate = reservationDateTime.toISOString().split('T')[0];
+
+        return (
+            formattedReservationDate === selectedDate &&
+            room.ReservationTime.includes(selectedTime.substr(0, 5))
+        );
+    });
+
+    return bookedUser ? String(bookedUser.QalamID) : "Available";
+}
+
+ 
 </script>
 
 <main>
@@ -68,50 +111,46 @@
     <div class="row">
       <!-- Left side with dropdown room list -->
       <div class="col-md-6">
-        <label for="roomDropdown">Select a Room:</label>
-        <select id="roomDropdown" bind:value={selectedRoom} on:change={updateTable} class="form-control">
-          <option value="">-- Select a Room --</option>
-          {#each rooms as room}
-            <option value={room.id}>{room.name}</option>
-          {/each}
-        </select>
+<label for="roomDropdown">Select a Room:</label>
+  <select id="roomDropdown" bind:value={selectedRoom} on:change={updateTable} class="form-control">
+    <option value="">-- Select a Room --</option>
+    {#each Array.from(new Set(rooms.map(room => room.RoomNo))) as roomNo}
+      <option value={roomNo}>{roomNo}</option>
+    {/each}
+  </select>
       </div>
 
       <!-- Right side with the smaller Bootstrap table -->
       <div class="col-md-6">
+         <div class="mb-3">
+      <label for="datePicker">Select a Date:</label>
+      <input type="date" id="datePicker"on:click = {updateTable} bind:value={selectedDate} min={getNext7Days()[0]} max={getNext7Days()[6]}>
+    </div>
         <div class="table-container">
           <table class="table table-sm table-bordered">
             <thead>
               <tr>
                 <th>Time</th>
                 <th>Availability</th>
-                <th>Book By</th>
-                <th>Action</th> <!-- New column for the "Remove" button -->
+                <th>Booked By</th>
               </tr>
             </thead>
 <tbody>
-  {#each timeSlots as time}
-    <tr>
-      <td>{time}</td>
-      <td class="{rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time) ? 'booked' : 'available'}">
-        {rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time) ? 'Booked' : 'Available'}
-      </td>
-      <td>
-        {#if rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time)}
-          {rooms.find(room => room.id == selectedRoom)?.bookedBy[rooms.find(room => room.id == selectedRoom)?.bookedTimings.indexOf(time)]}
-        {:else}
-          - <!-- Display a dash if the time slot is not booked -->
-        {/if}
-      </td>
-      <td>
-        {#if rooms.find(room => room.id == selectedRoom)?.bookedTimings.includes(time)}
-          <button class="btn btn-danger btn-sm" on:click={() => removeBooking(selectedRoom, time)}>Remove</button>
-        {:else}
-          - <!-- Display a dash if the time slot is not booked -->
-        {/if}
-      </td>
+{#each timeSlots as time}
+  <tr>
+    <td>{time}</td>
+    <td>
+{#if TimeBooked(selectedRoom, selectedDate, time) != ''}
+Booked
+{:else}
+Available
+{/if}
+    </td>
+<td>
+ { TimeBooked(selectedRoom, selectedDate, time)}
+</td>
     </tr>
-  {/each}
+{/each}
 </tbody>
 
           </table>

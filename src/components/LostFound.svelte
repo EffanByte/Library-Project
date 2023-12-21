@@ -5,8 +5,10 @@
 
   let foundItems = [];
   let lostItems = [];
-  let newItemDescription = '';
-  let newDateReported = '';
+  let lostItemDescription = '';
+  let lostDateReported = '';
+  let foundItemDescription = '';
+  let foundDateReported = '';
 
   // Function to fetch all found items
   const fetchFoundItems = async () => {
@@ -34,34 +36,61 @@
     }
   };
 
-  const reportItem = async (type) => {
+  const reportFoundItem = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/report_${type}_item`, {
+      const loggedInUser = get(user);
+
+      const response = await fetch(`http://localhost:8000/api/reportFoundItem?id=${loggedInUser.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          qalam_id: get(user).qalam_id,
-          item_description: newItemDescription,
-          date_reported: newDateReported,
+          foundItemDescription,
+          foundDateReported
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to report ${type} item`);
+        throw new Error('Failed to report found item');
       }
 
-      // Refresh the items after reporting
-      if (type === 'found') {
-        fetchFoundItems();
-      } else {
-        fetchLostItems();
-      }
+      // Refresh the found items after reporting
+      fetchFoundItems();
 
       // Clear the input fields
-      newItemDescription = '';
-      newDateReported = '';
+      ItemDescription = '';
+      DateReported = '';
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const reportLostItem = async () => {
+    try {
+      const loggedInUser = get(user);
+
+      const response = await fetch(`http://localhost:8000/api/reportLostItem?id=${loggedInUser.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lostItemDescription,
+          lostDateReported
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to report lost item');
+      }
+
+      // Refresh the lost items after reporting
+      fetchLostItems();
+
+      // Clear the input fields
+      ItemDescription = '';
+      DateReported = '';
     } catch (error) {
       console.error(error.message);
     }
@@ -95,7 +124,6 @@
       {:else}
         <p class="no-items-message">No found items reported.</p>
       {/if}
-      <p>{JSON.stringify(foundItems)}</p>
     </section>
 
     <!-- Lost Items Section -->
@@ -115,33 +143,32 @@
       {:else}
         <p class="no-items-message">No lost items reported.</p>
       {/if}
-      <p>{JSON.stringify(lostItems)}</p>
     </section>
 
     <!-- Report Item Section -->
     <section class="report-item-section">
       <h2 class="additional-title">Report a Lost or Found Item</h2>
-      <form on:submit|preventDefault={() => reportItem('found')}>
-        <label for="newItemDescription">Item Description:</label>
-        <input type="text" bind:value={newItemDescription} id="newItemDescription" required>
-
-        <label for="newDateReported">Date Reported:</label>
-        <input type="date" bind:value={newDateReported} id="newDateReported" required>
+      <form on:submit|preventDefault={reportFoundItem}>
+        <label for="ItemDescription1">Item Description:</label>
+        <input type="text" bind:value={foundItemDescription} id="ItemDescription1" required>
+       c
+        <label for="DateReported1">Date Reported:</label>
+        <input type="date" bind:value={foundDateReported} id="DateReported1" required>
 
         <button type="submit">Report Found Item</button>
       </form>
 
-      <form on:submit|preventDefault={() => reportItem('lost')}>
-        <label for="newItemDescription">Item Description:</label>
-        <input type="text" bind:value={newItemDescription} id="newItemDescription" required>
+      <form on:submit|preventDefault={reportLostItem}>
+        <label for="ItemDescription2">Item Description:</label>
+        <input type="text" bind:value={lostItemDescription} id="ItemDescription2" required>
 
-        <label for="newDateReported">Date Reported:</label>
-        <input type="date" bind:value={newDateReported} id="newDateReported" required>
+        <label for="DateReported2">Date Reported:</label>
+        <input type="date" bind:value={lostDateReported} id="DateReported2" required>
 
         <button type="submit">Report Lost Item</button>
       </form>
     </section>
-  </div>
+  </div>cd 
 </main>
 
 <style>
@@ -150,7 +177,7 @@
     padding: 40px 0;
   }
 
-  .container-me {
+  .container {
     max-width: 800px;
     margin: 0 auto;
     background-color: white;

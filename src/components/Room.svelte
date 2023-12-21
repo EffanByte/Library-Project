@@ -42,7 +42,6 @@
       hasMounted = true;
     }
   });
-
 function isTimeBooked(roomNo, selectedDate, selectedTime) {
     const selectedRoomData = rooms.filter(room => room.RoomNo == roomNo);
 
@@ -50,10 +49,13 @@ function isTimeBooked(roomNo, selectedDate, selectedTime) {
         const reservationDateTime = new Date(room.ReservationTime);
         const formattedReservationDate = reservationDateTime.toISOString().split('T')[0];
 
-        return (
-            formattedReservationDate === selectedDate &&
-            room.ReservationTime.includes(selectedTime.substr(0, 5))
-        );
+if (            formattedReservationDate === selectedDate &&
+            room.ReservationTime.includes(selectedTime.substr(0, 5))){
+            console.log(room.QalamID)
+            return room.QalamID;
+            }
+else 
+return false;
     });
 }
  
@@ -103,7 +105,6 @@ async function bookNow(selectedDate, selectedTime) {
   }
 
 async function updateTable() {
-  console.log("Testing");
     try {
       // Clear the existing data before fetching new data
       rooms = [];

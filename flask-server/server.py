@@ -1,4 +1,5 @@
 import bcrypt
+import mysql.connector
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from books import *
@@ -6,6 +7,8 @@ from classes.user import *
 from werkzeug.security import check_password_hash
 from classes.FoundItems import *
 from classes.LostItems import *
+from classes.IssuedBooks import *
+from classes.complaints import *
 from datetime import datetime
 import re
 
@@ -358,7 +361,7 @@ def get_all_users():
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/api/all_issued_books_library', methods=['GET'])
+'''@app.route('/api/all_issued_books_library', methods=['GET'])
 def get_all_issued_books_library():
     try:
         # Create a cursor
@@ -369,6 +372,7 @@ def get_all_issued_books_library():
 
         # Fetch all the rows
         result_set = cur.fetchall()
+        print(result_set)
 
         # Convert the result set to a list of dictionaries for JSON serialization
         issued_books = [{'BookID': row[0], 'Title': row[1], 'IssuedBy': row[2]} for row in result_set]
@@ -379,7 +383,25 @@ def get_all_issued_books_library():
         return jsonify(issued_books), 200
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500   
+        return jsonify({'error': str(e)}), 500  '''
+    
+@app.route('/api/allIssuedBooksLibrary', methods=['GET'])
+def get_all_issued_books_library():
+    try:
+        # Create a cursor
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Call the MySQL stored procedure
+        issuedbookInfo=IssuedBooks.GetAllIssuedBooksLibrary(conn)
+        cursor.close()
+        conn.close()
+        
+       
+        return jsonify(issuedbookInfo), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     
 @app.route('/api/all_found_items', methods=['GET'])
 def get_all_found_items():
@@ -414,18 +436,23 @@ def get_all_lost_items():
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/api/report_found_item', methods=['POST'])
+@app.route('/api/reportFoundItem', methods=['POST'])
 def report_found_item():
     try:
+        userID = request.args.get('id') 
         data = request.json
-        qalam_id = data['qalam_id']
-        item_description = data['item_description']
-        date_reported = data['date_reported']
+        
+       # item_description = data['ItemDescription']
+       # date_reported = data['DateReported']
+        
+        item_description = data.get('foundItemDescription')
+        date_reported = data.get('foundDateReported')
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute("CALL ReportFoundItem(%s, %s, %s)", (qalam_id, item_description, date_reported))
+        #cursor.execute("CALL ReportFoundItem(%s, %s, %s)", (userID, item_description, date_reported))
+        cursor.execute("INSERT INTO founditems (QalamID,ItemDescription,DateReported) VALUES (%s,%s,%s)", (userID,item_description,date_reported,))
         conn.commit()
 
         cursor.close()
@@ -436,20 +463,22 @@ def report_found_item():
         return jsonify({'error': str(e)}), 500
     
 
-@app.route('/api/report_lost_item', methods=['POST'])
+@app.route('/api/reportLostItem', methods=['POST'])
 def report_lost_item():
     try:
+        userID = request.args.get('id') 
         data = request.json
-        qalam_id = request.args.get['QalamID']
-        print(qalam_id)
+        
+        
         #qalam_id = data['qalam_id']
-        item_description = data['item_description']
-        date_reported = data['date_reported']
+        item_description = data.get('lostItemDescription')
+        date_reported = data.get('lostDateReported')
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute("CALL ReportLostItem(%s, %s, %s)", (qalam_id, item_description, date_reported))
+       # cursor.execute("CALL ReportLostItem(%s, %s, %s)", (userID, item_description, date_reported))
+        cursor.execute("INSERT INTO lostitems (QalamID,ItemDescription,DateReported) VALUES (%s,%s,%s)", (userID,item_description,date_reported,))
         conn.commit()
 
         cursor.close()
@@ -494,6 +523,52 @@ def update_user(qalam_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
+
+@app.route('/api/submitComplaints', methods=['POST'])
+def submit_complaint():
+    try:
+        userID = request.args.get('id')  
+        print(userID)
+        data = request.json
+        
+        complaint_details = data.get('complaint_description')
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Insert the complaint data into the database
+        cursor.execute("INSERT INTO complaints (complaint_description,QalamID) VALUES (%s,%s)", (complaint_details,userID,))
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({'message': 'Complaint submitted successfully'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/complaints', methods=['GET'])
+def get_complaints():
+    try:
+        # Assuming you have a method to get the database connection
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming your complaints table has complaintID and complaint_description columns
+        cursor.execute("SELECT complaintID, complaint_description FROM complaints")
+        complaints_info = cursor.fetchall()
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(complaints_info), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
 # running the flask server    
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 8000, debug=True)

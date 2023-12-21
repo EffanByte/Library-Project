@@ -14,3 +14,16 @@ class IssuedBooks:
         self.db_connection.cursor.execute(query, values)
         self.db_connection.conn.commit()
 
+    @staticmethod
+    def GetAllIssuedBooksLibrary(db_connection):
+   
+        cursor = db_connection.cursor(dictionary=True)
+        call_proc = "CALL GetAllIssuedBooksLibrary()"
+        cursor.execute(call_proc)
+        issuedbook_info = cursor.fetchall()
+        print(issuedbook_info)
+
+        cursor.close()
+        return issuedbook_info
+    
+    
