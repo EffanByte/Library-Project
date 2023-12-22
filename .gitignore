@@ -2,3 +2,7 @@
 /public/build/
 
 .DS_Store
+flask-server/__pycache__/books.cpython-310.pyc
+flask-server/__pycache__/books.cpython-310.pyc
+flask-server/classes/__pycache__/IssuedBooks.cpython-310.pyc
+flask-server/classes/__pycache__/user.cpython-310.pyc
