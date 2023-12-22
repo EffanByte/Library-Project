@@ -47,7 +47,7 @@
     <p>CMS ID: {profileData.cmsId}</p>
     <p>Email: {profileData.userEmail}</p>
 
-    <h4 class="mt-4">Currently Rented/Bought Books</h4>
+    <h4 class="mt-4">Currently Issued Books</h4>
     <ul class="list-group">
         {#each profileData.booksRented as book}
             <li class="list-group-item d-flex justify-content-between align-items-center">

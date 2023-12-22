@@ -10,7 +10,3 @@ export const isLibrarian = writable({ is: true });
 export const backgroundColor = writable('#C6DEF1');
 export const userroles = writable("guest");
 export const pdfDataStore = writable('');
-
-
-
-

@@ -3,22 +3,16 @@
     import PDFObject from 'pdfobject';
     import { pdfDataStore } from "../components/store.js";
 
-    let pdfDataUri;
+let pdfDataUri;
 
-    $: if (pdfDataUri) {
-        PDFObject.embed(pdfDataUri, '.container');
-    }
-
-    onMount(() => {
-        const unsubscribe = pdfDataStore.subscribe(data => {
-            if (data) {
-                pdfDataUri = `data:application/pdf;base64,${data}`;
-                console.log("PDF set in BookPDF.Svelte");
-            }
-        });
-
-        return unsubscribe; // Cleanup subscription on component destruction
+onMount(() => {
+    pdfDataStore.subscribe(data => {
+        if (data) {
+            pdfDataUri = `data:application/pdf;base64,${data}`;
+            PDFObject.embed(pdfDataUri, '.container');
+        }
     });
+});
 </script>
 
 <div class="container"></div>

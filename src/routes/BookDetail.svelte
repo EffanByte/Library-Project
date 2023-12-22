@@ -5,14 +5,15 @@
     import { push, params,  } from 'svelte-spa-router';
     import axios from 'axios';  // assuming axios is installed, otherwise use fetch
     import { selectedBookID, user, loggedIn } from '../components/store.js';
-    let renting = false;
-    let selectedDuration = '';
-    let rentAmount = 0;
+    
+    let issueing = false;
+    let selectedDuration = 0    ;
+    let issueAmount = 0;
     let fineMessage = '';
     let book = null;
     let delay=''
-    
     let bookID;
+    let due_date = null
 selectedBookID.subscribe(value => {
     bookID = value;
     if (bookID) {
@@ -74,33 +75,67 @@ function viewPDF() {
 
     function OpenModal() {
         if ($loggedIn.is == true){
-        renting = true;
+        issueing = true;
         }
         else
         alert("Please log in to borrow a book");
     }
 
-    function handleDurationSelection(event) {
-        selectedDuration = event.target.value;
-        // Calculate rent amount and fine message based on the selected duration
-        // This is a placeholder, replace with actual calculation logic
-        if (selectedDuration === '1 week') {
-            rentAmount = 5;
-            fineMessage = 'Fine: $10 if late.';
-        } else if (selectedDuration === '2 weeks') {
-            rentAmount = 30;
-            fineMessage = 'Fine: $30 if late.';
-        } else if (selectedDuration === '1 month') {
-            rentAmount = 50;
-            fineMessage = 'Fine: $50 if late.';
-        } else if (selectedDuration === '3 months') {
-            rentAmount = 100;
-            fineMessage = 'Fine: $100 if late.';
-        }
-
-
+  function handleDurationSelection(event) {
+    selectedDuration = event.target.value;
+    
+    // Calculate due date based on the selected duration
+    if (selectedDuration) {
+      const durationInDays = parseInt(selectedDuration); // Parse duration as an integer
+      const currentDate = new Date();
+      due_date = new Date(currentDate.getTime() + durationInDays * 24 * 60 * 60 * 1000);
+      
+      // Format the due_date to "YYYY-MM-DD"
+      const year = due_date.getFullYear();
+      const month = String(due_date.getMonth() + 1).padStart(2, '0');
+      const day = String(due_date.getDate()).padStart(2, '0');
+      due_date = `${year}-${month}-${day}`;
     }
-/*function displayRent(){
+  }
+    async function IssueBook() {
+        try {
+
+            // Call your backend API to issue the book
+            console.log("Test 1")
+            const response = await fetch(`http://localhost:8000/api/issueBook`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+
+                body: JSON.stringify({
+                    QalamID: $user.id, // Assuming you have user information in your store
+                    BookID: bookID,
+                    JobID: 1, // Assuming you have job information in your store
+                    DueDate: due_date, // Placeholder, you need to calculate the actual due date
+                }),
+            });
+            console.log($user.id)
+            console.log(bookID)
+            console.log(due_date)
+            if (response.ok) {
+                // If the API call is successful, remove the book from the local list or update its status
+                // (You need to implement the logic to update your local data store)
+                console.log("Test3")
+                // Close the modal
+                selectedDuration = 0;
+                issueAmount = 0;
+                fineMessage = '';
+                closePopup();
+            }
+        } catch (error) {
+            console.error('Error issuing book:', error);
+            // Handle error (display a message, log, etc.)
+        }
+        closePopup();
+       
+    }
+/*function displayIssue(){
      if (delay === 'one week') {
            
             fineMessage = 'Fine: $10 if late.';
@@ -116,9 +151,9 @@ function viewPDF() {
         }
 }*/
     function closePopup() {
-        renting = false;
-        selectedDuration = '';
-        rentAmount = 0;
+        issueing = false;
+        selectedDuration = 0;
+        issueAmount = 0;
         fineMessage = '';
     }
 
@@ -161,7 +196,7 @@ function viewPDF() {
                 <p>{book.Description}</p>
             </div>
             {#if `${book.TypeID}` == 2}
-            <button class="btn btn-primary" on:click={OpenModal}>Rent Book</button>
+            <button class="btn btn-primary" on:click={OpenModal}>Issue Book</button>
             {:else if `${book.TypeID}` == 1}
             <button class = "btn btn-secondary" on:click = {viewPDF}>View PDF</button>
             {/if}
@@ -170,34 +205,33 @@ function viewPDF() {
         <p>Loading...</p>
     {/if}
 
-    <!-- Renting modal section -->
-    {#if renting}
+    <!-- Issueing modal section -->
+    {#if issueing}
     <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Rent Book</h5>
+                    <h5 class="modal-title">Issue Book</h5>
                     <button type="button" class="close" on:click={closePopup}>
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <p>Select duration:</p>
-                    <select on:change={handleDurationSelection}>
+                    <select on:change = {handleDurationSelection}>
                         <option value="" disabled selected>Select duration</option>
-                        <option value="one week">One week</option>
-                        <option value="two weeks">Two weeks</option>
-                        <option value="one month">One month</option>
-                        <option value="three months">three months</option>
+                        <option value="7">One week</option>
+                        <option value="14">Two weeks</option>
+                        <option value="30">One month</option>
+                        <option value="90">three months</option>
                     </select>
                     {#if selectedDuration}
-                        <p>Rent amount: ${rentAmount}</p>
                         <p>{fineMessage}</p>
                     {/if}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" on:click={closePopup}>Close</button>
-                    <button type="button" class="btn btn-primary" disabled={!selectedDuration}>Rent</button>
+                    <button type="button" class="btn btn-primary" disabled={!selectedDuration} on:click = {IssueBook}>Issue</button>
                 </div>
             </div>
         </div>

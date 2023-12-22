@@ -1,12 +1,17 @@
 <script>
   import { onMount } from 'svelte';
   import { get } from 'svelte/store';
-
+  import axios from 'axios'
   let issuedBooks = [];
-
   // Function to fetch all issued books from the library
   const fetchIssuedBooksLibrary = async () => {
+
+  };
+
+  // Fetch issued books when the component is mounted
+  onMount(async () => {
     try {
+          try {
       const response = await fetch('http://localhost:8000/api/allIssuedBooksLibrary');
       if (!response.ok) {
         throw new Error('Failed to fetch issued books data');
@@ -15,11 +20,20 @@
     } catch (error) {
       console.error(error.message);
     }
-  };
-
-  // Fetch issued books when the component is mounted
-  onMount(() => {
-    fetchIssuedBooksLibrary();
+    console.log(issuedBooks)
+    console.log(issuedBooks.length)
+      // For each issued book, fetch the title from the books table
+      for (let i = 0; i < issuedBooks.length; i++) {
+        const bookID = issuedBooks[i].BookID;
+        const bookResponse = await axios.get(`http://localhost:8000/api/books/${bookID}`);
+        const bookTitle = bookResponse.data.Title;
+        console.log(bookTitle)
+        // Add the Title attribute to the issuedBooks array
+        issuedBooks[i].Title = bookTitle;
+      }
+    } catch (error) {
+      console.error('Error fetching issued books:', error);
+    }
   });
 
   </script>
@@ -27,13 +41,13 @@
     <div class="container h-100">
       <div class="heading">Issued Books from the Library</div>
   
-      {#if issuedBooks.length > 0}
+      {#if issuedBooks.length> 0}
         <ul class="issued-books-list">
-          {#each issuedBooks as { BookID, Title, IssuedBy }}
+          {#each issuedBooks as { BookID, Title, DueDate }}
             <li class="issued-book" key={BookID}>
-              <div class="book-id">{BookID}</div>
+              <div class="book-id">BookID: {BookID}</div>
               <div class="title">{Title}</div>
-              <div class="issued-by">Issued By: {IssuedBy}</div>
+              <div class="DueDate">{DueDate}  </div>
             </li>
           {/each}
         </ul>

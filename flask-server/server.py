@@ -14,6 +14,7 @@ from classes.IssuedBooks import *
 from classes.complaints import *
 from datetime import datetime
 import re
+import base64
 
 
 app = Flask(__name__)
@@ -30,6 +31,26 @@ def get_db_connection():
         password='',
         database='virtual_library'
     )
+
+@app.route('/api/deletecomplaints', methods=['DELETE'])
+def delete_complaint():
+    try:
+        # Assuming you have a method to get the database connection
+        complaint_id = request.args.get('id')
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming your complaints table has complaintID and complaint_description columns
+        cursor.execute("DELETE FROM complaints WHERE complaintID = %s", (complaint_id,))
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify("Complaint resolved successfully."), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/rooms', methods=['GET'])
 def get_all_rooms_from_db():
@@ -395,6 +416,29 @@ def get_all_users():
         return jsonify({'error': str(e)}), 500
     
 
+@app.route('/api/profile', methods=['GET'])
+def get_profile():
+    user_id = request.args.get('id')  # Get the user ID from query parameter
+    #print("User ID getting obtained:", user_id)
+    if not user_id:
+        return jsonify({'error': 'Missing user ID'}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming you have a method in your User class to get profile info
+        profile_info = User.get_user_info(int(user_id), conn)
+        #print(profile_info)
+
+
+        cursor.close()
+        conn.close()
+        return jsonify(profile_info), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 '''@app.route('/api/all_issued_books_library', methods=['GET'])
 def get_all_issued_books_library():
     try:
@@ -425,18 +469,50 @@ def get_all_issued_books_library():
         # Create a cursor
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-
         # Call the MySQL stored procedure
-        issuedbookInfo=IssuedBooks.GetAllIssuedBooksLibrary(conn)
+        cursor.execute("SELECT * FROM issuedbooks")
+        issuedbooksInfo = cursor.fetchall()
+        print(issuedbooksInfo)
         cursor.close()
         conn.close()
         
        
-        return jsonify(issuedbookInfo), 200
+        return jsonify(issuedbooksInfo), 200
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
  
+@app.route('/api/issueBook', methods=['POST'])
+def issue_book():
+    try:
+        # Assuming you have a method to get the database connection
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Assuming your books table has IssuedID, QalamID, BookID, JobID, and DueDate columns
+        data = request.get_json()
+        print(data)
+        qalam_id = data.get('QalamID')
+        book_id = data.get('BookID')
+        job_id = data.get('JobID')
+        due_date = data.get('DueDate')
+
+        # Assuming your procedure for issuing a book is named "IssueBook"
+        cursor.execute("SELECT * FROM issuedbooks WHERE QalamID = %s AND BookID = %s", (qalam_id, book_id))
+        existing_issue = cursor.fetchone()
+
+        if existing_issue:
+            return jsonify("User has already issued this book."), 400
+        cursor.execute("INSERT INTO issuedbooks (QalamID, BookID, JobID, DueDate) VALUES (%s,%s,%s,%s)", (qalam_id, book_id, job_id, due_date,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify("Book issued successfully."), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 '''   
 @app.route('/api/all_found_items', methods=['GET'])
 def get_all_found_items():
@@ -573,9 +649,10 @@ def submit_complaint():
 
         conn = get_db_connection()
         cursor = conn.cursor()
-
+        print(userID)
+        print(complaint_details)
         # Insert the complaint data into the database
-        cursor.execute("INSERT INTO complaints (complaint_description,QalamID) VALUES (%s,%s)", (complaint_details,userID,))
+        cursor.execute("INSERT INTO complaints (complaintID, complaint_description) VALUES (%s,%s)", (userID, complaint_details))
         conn.commit()
 
         cursor.close()
@@ -678,7 +755,37 @@ def mark_item_found():
     except Exception as e:
         return jsonify({'error': str(e)}), 500    
 
+@app.route('/api/getLastBookRead', methods=['GET'])
+def get_last_book_read():
+    qalam_id = request.args.get('id', type=int)  # Parse ID as an integer
+    if not qalam_id:
+        return jsonify({'error': 'Missing ID'}), 400
 
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        print("connection made")
+        call_proc = "CALL getLastBookRead(%s)"
+       
+        cursor.execute(call_proc, (qalam_id,))
+        last_book_read = cursor.fetchone()
+        print("procedure called")
+
+        if last_book_read and last_book_read['coverImage']:
+            if last_book_read.get('coverImage'):
+                last_book_read['coverImage'] = base64.b64encode(last_book_read['coverImage']).decode('utf-8')
+            if last_book_read.get('PDF'):
+                last_book_read['PDF'] = base64.b64encode(last_book_read['PDF']).decode('utf-8')
+        return jsonify(last_book_read), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 @app.route('/api/setLastBookRead', methods=['POST'])
 def set_last_book_read():

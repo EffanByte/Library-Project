@@ -1,15 +1,21 @@
 <script>
     import { onMount } from 'svelte';
     import { push } from "svelte-spa-router";
-    import {user, loggedIn } from "../components/store.js";
+    import {user, loggedIn, pdfDataStore } from "../components/store.js";
     import { createEventDispatcher } from 'svelte';
+    import { get } from 'svelte/store';
+    import PDFObject from "pdfobject";
 
 
     let greeting;
+    let lastReadBook = [];
+    let lastReadBookCoverImage = '';
 
     onMount(() => {
         updateGreeting();
+        getLastReadBook();
     });
+
     
     function updateGreeting() {
         const hour = new Date().getHours();
@@ -52,6 +58,69 @@ function gotoComplaint(){
     }
     
 }
+
+
+
+
+async function getLastReadBook() {
+    console.log("Entered getLastReadBook()");
+    const loggedInUser = get(user);
+    console.log(user);
+    if (user.username != '' && user.id != 0) {
+        console.log("Entered first if condition")
+        try {
+            // Ensure that loggedInUser.id is an integer.
+            const userId = parseInt(loggedInUser.id, 10);
+            // Check if userId is a valid integer.
+            if (isNaN(userId)) {
+                throw new Error('Invalid user ID');
+            }
+
+            // Fetch the last book read data using the user ID.
+            const response = await fetch(`http://localhost:8000/api/getLastBookRead?id=${userId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch last read book');
+            }
+
+            const lastBookReadData = await response.json();
+            lastReadBook = lastBookReadData;
+            if (lastBookReadData && lastBookReadData.coverImage) {
+                lastReadBookCoverImage = `data:image/jpeg;base64,${lastBookReadData.coverImage}`;
+            }
+        } catch (error) {
+            console.error('Error:', error.message);
+        }
+    }
+}
+
+
+   /*function openLastReadBookPDF() {
+        if (lastReadBook && lastReadBook.PDF) {
+            const pdfData = `data:application/pdf;base64,${lastReadBook.PDF}`;
+            window.open(pdfData);
+        }
+
+    }*/
+
+    /*function openLastReadBookPDF() {
+    if (lastReadBook && lastReadBook.PDF) {
+        const pdfData = `data:application/pdf;base64,${lastReadBook.PDF}`;
+        PDFObject.embed(pdfData, ".pdf-container"); // Use a dedicated container for the PDF
+    }
+}*/
+function openLastReadBookPDF() {
+    if (lastReadBook && lastReadBook.PDF) {
+        pdfDataStore.set(lastReadBook.PDF); // Set the PDF data in the store
+        push('/BookPDF'); // Navigate to the BookPDF route
+    }
+}
+
+    $: if ($user && $user.id) {
+  getLastReadBook();
+}
+
+
+
 </script>
 
 <div class="container">
@@ -67,14 +136,16 @@ function gotoComplaint(){
         </div>
         {#if $user.username != ''}
         <div class="col-md-6">
-            <!-- Move the image and button to the top right side -->
             <div class="d-flex flex-column align-items-center justify-content-center mt-4 spa">
-                <img src="librarybg.jpg" alt="Last Read Book" class="effimg">
-                <button class="btn btn-primary mt-2 mb-3">Continue Reading Last Book</button>
+                <img src={lastReadBookCoverImage} alt="Your last Read Book Will Show up Here" class="effimg">
+                <button on:click={openLastReadBookPDF} class="btn btn-primary mt-2 mb-3">Continue Reading Last Book</button>
             </div>
         </div>
-        {/if}
-    </div>
+    {/if}
+    
+        </div>
+
+        
 
     <div class="row">
     <div class="col-lg-4 mb-4">
@@ -139,5 +210,10 @@ function gotoComplaint(){
     .card:hover {
         transform: scale(1.05);
     }
+
+    .pdf-container {
+    width: 100%; /* Full width of the container */
+    height: 600px; /* Adjust the height as needed */
+}
 
 </style>

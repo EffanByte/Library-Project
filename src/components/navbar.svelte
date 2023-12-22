@@ -1,39 +1,39 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  import {user, loggedIn, isLibrarian} from "./store.js";
-  import { push } from 'svelte-spa-router';
-  import { onMount, onDestroy } from 'svelte';
-  const dispatch = createEventDispatcher();
-  
-   let showDropdown = false;
-      function toggleDropdown() {
-          console.log(showDropdown);
-      showDropdown = !showDropdown;
-  }
-      function logout() {
-      loggedIn.set({is: false});
-      user.set({ username: '',});
-      push('/');
-      showDropdown = false;
-  }
-      function goToProfile() {
-          console.log($user.username);
-      push(`/user/${user.username}`);
-      showDropdown = false;
-  }
-  function openLogin() {
-      dispatch('login');
-  }
-  function openSignup(){
-      dispatch('signup');
-  }
-  let homepage = "/#/";
-  function handleOutsideClick(event) {
-      // Check if the click is outside the navbar or dropdown
-      if (showDropdown && !event.target.closest('.navbar')) {
-          toggleDropdown();
-      }
-  }
+    import { createEventDispatcher } from 'svelte';
+    import {user, loggedIn, isLibrarian} from "./store.js";
+    import { push } from 'svelte-spa-router';
+    import { onMount, onDestroy } from 'svelte';
+    const dispatch = createEventDispatcher();
+    
+     let showDropdown = false;
+        function toggleDropdown() {
+            console.log(showDropdown);
+        showDropdown = !showDropdown;
+    }
+        function logout() {
+        loggedIn.set({is: false});
+        user.set({ username: '',});
+        push('/');
+        showDropdown = false;
+    }
+        function goToProfile() {
+            console.log($user.username);
+        push(`/user/${user.username}`);
+        showDropdown = false;
+    }
+    function openLogin() {
+        dispatch('login');
+    }
+    function openSignup(){
+        dispatch('signup');
+    }
+    let homepage = "/#/";
+    function handleOutsideClick(event) {
+        // Check if the click is outside the navbar or dropdown
+        if (showDropdown && !event.target.closest('.navbar')) {
+            toggleDropdown();
+        }
+    }
 
   onMount(() => {
       window.addEventListener('click', handleOutsideClick);
@@ -46,40 +46,40 @@
 </script>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-<div class="container-fluid">
-  <!-- Logo -->
-  {#if $user.role === 'Supervisor'}
-  <a class="navbar-brand"  href= "/#/Librarian">
-    Virtual Library
-  </a>
-  {:else}
-      <a class="navbar-brand"  href= "/#/">
-    Virtual Library
-  </a>
-  {/if}
+  <div class="container-fluid">
+    <!-- Logo -->
+    {#if $user.role === 'Supervisor'}
+    <a class="navbar-brand"  href= "/#/Librarian">
+      Virtual Library
+    </a>
+    {:else}
+        <a class="navbar-brand"  href= "/#/">
+      Virtual Library
+    </a>
+    {/if}
 {#if $isLibrarian.is == true}
-  <div class="navbar-center">
-  </div>
-  {/if}
-  {#if $loggedIn.is == true}
-    <!-- Check if the user is logged in -->
-    <div class="user-area" style="cursor: pointer" on:click={toggleDropdown}>
-      
-      Hello, {$user.username}!
-      {#if showDropdown}
-        <!-- Dropdown toggle -->
-        <div class="dropdown-container" on:click={toggleDropdown}>
-          <div class="dropdown-item" on:click={goToProfile}>Profile</div>
-          <div class="dropdown-item" on:click={logout}>Log Out</div>
-        </div>
-      {/if}
+    <div class="navbar-center">
     </div>
-  {:else}
-    <div class="d-flex">
-      <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
-      <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click={openSignup}>Sign Up</button>
-    </div>
-  {/if}
+    {/if}
+    {#if $loggedIn.is == true}
+      <!-- Check if the user is logged in -->
+      <div class="user-area" style="cursor: pointer" on:click={toggleDropdown}>
+        
+        Hello, {$user.username}!
+        {#if showDropdown}
+          <!-- Dropdown toggle -->
+          <div class="dropdown-container" on:click={toggleDropdown}>
+            <div class="dropdown-item" on:click={goToProfile}>Profile</div>
+            <div class="dropdown-item" on:click={logout}>Log Out</div>
+          </div>
+        {/if}
+      </div>
+    {:else}
+      <div class="d-flex">
+        <button class="btn btn-outline-primary" type="button" on:click={openLogin}>Login</button>
+        <button class="btn btn-primary" type="button" style="margin-left: 10px;" on:click={openSignup}>Sign Up</button>
+      </div>
+    {/if}
 
   <!-- New navbar element -->
 
