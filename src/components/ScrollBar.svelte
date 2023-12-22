@@ -1,17 +1,14 @@
 <script>
     // Dummy items array
     const items = [
-        { id: 1, cover: 'avatar2.avif', text: 'Item 1' },
-        { id: 2, cover: 'booknews.png', text: 'Item 2' },
-        { id: 1, cover: 'booknews.png', text: 'Item 1' },
-        { id: 2, cover: 'avatarimg.png', text: 'Item 2' },
-        { id: 1, cover: 'avatarimg.png', text: 'Item 1' },
-        { id: 2, cover: 'booknews.png', text: 'Item 2' },
-        { id: 1, cover: 'avatarimg.png', text: 'Item 1' },
-        { id: 2, cover: 'avatar2.avif', text: 'Item 2' },
-        { id: 1, cover: 'booknews.png', text: 'Item 1' },
-        { id: 2, cover: 'booknews.png', text: 'Item 2' },
-
+        { id: 1, cover: 'booknews.png', text: "User Affan just issued Effan's Book"},
+        { id: 2, cover: 'avatar2.avif', text: "User Affan just signed up" },
+        { id: 1, cover: 'booknews.png', text: 'User Hamza Riaz just submitted a complaint' },
+        { id: 2, cover: 'booknews.png', text: 'User Arham booked room #101' },
+        { id: 1, cover: 'avatarimg.png', text: 'User Arham just signed up' },
+        { id: 2, cover: 'booknews.png', text: "User Hamza's complaint has been resolved" },
+        { id: 1, cover: 'avatarimg.png', text: 'User Shah just signed up' },
+        { id: 2, cover: 'avatar2.avif', text: 'User Hamza just Signed up' },
 
 
         // ... more items
@@ -25,7 +22,7 @@
                 <div class="card">
                 <img class="img-fluid" alt="100%x280" src="{item.cover}">
                     <div class="card-body">
-                        <h4 class="card-title">News text Here</h4>
+                        <h4 class="card-title">{item.text}</h4>
                     </div>
                 </div>
             </div>
@@ -37,7 +34,9 @@
     .scrollbar::-webkit-scrollbar {
         height: 8px;
     }
-
+    .card-title{
+        font-size: 15px;
+    }
     .scrollbar::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 4px;

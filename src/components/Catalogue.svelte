@@ -85,9 +85,30 @@
     .slice(0, 5);
     function navigateToBook(bookID) {
         selectedBookID.set(bookID); // TEMPORARY WORKAROUND TO MAKE BookDetail.svelte work
+        setLastReadBookIfNeeded(bookID);
         push(`/book/${bookID}`);
 
     }
+   // const loggedInUser = get(user);
+
+    async function setLastReadBookIfNeeded(bookID) {
+      const loggedInUser = get(user);
+    if (loggedInUser && loggedInUser.id) {
+        try {
+            // Call your API to set the last read book
+            const response = await axios.post('http://localhost:8000/api/setLastBookRead', {
+                userId: loggedInUser.id,
+                bookId: bookID
+            });
+            if (response.status !== 200) {
+                throw new Error(response.data.error || 'Failed to set last read book');
+            }
+        } catch (error) {
+            console.error('Error setting last read book:', error.message);
+        }
+    }
+}
+
 </script>
 
 <main>

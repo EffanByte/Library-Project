@@ -49,10 +49,10 @@ def get_all_rooms_from_db():
         print("Error fetching rooms:", e)
     finally:
         cursor.close()
-        connection.close()  
+        connection.close()   
 
 
-@app.route('/api/rooms', methods=['POST'])
+@app.route('/api/rooms1', methods=['POST'])
 def post_to_room():
     try:
         data = request.json
@@ -77,7 +77,9 @@ def post_to_room():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-from flask import request, jsonify
+
+
+
 
 @app.route('/api/remove_bookings', methods=['POST'])
 def remove_user_bookings():
@@ -89,7 +91,7 @@ def remove_user_bookings():
         cursor = db_connection.cursor()
 
         # Delete all bookings for the specified user
-        cursor.execute("DELETE FROM Room WHERE QalamID = %s and reservationtime != '2023-12-20 08:00:00'", (qalam_id,))
+        cursor.execute("DELETE FROM room WHERE QalamID = %s and reservationtime != '2023-12-20 08:00:00'", (qalam_id,))
         db_connection.commit()
         db_connection.close()
 
@@ -676,6 +678,45 @@ def mark_item_found():
     except Exception as e:
         return jsonify({'error': str(e)}), 500    
 
+
+
+@app.route('/api/setLastBookRead', methods=['POST'])
+def set_last_book_read():
+    data = request.get_json()
+    user_id = data.get('userId')
+    book_id = data.get('bookId')
+
+    if not user_id or not book_id:
+        return jsonify({'error': 'Missing user ID or book ID'}), 400
+
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Check if a last read book already exists for the user
+        cursor.execute('SELECT * FROM LastBookRead WHERE QalamID = %s', (user_id,))
+        last_read = cursor.fetchone()
+        
+        if last_read:
+            # If it exists, update it
+            cursor.execute('UPDATE LastBookRead SET BookID = %s WHERE QalamID = %s', (book_id, user_id))
+            print("UPDATE query ran")
+        else:
+            # If not, insert a new record
+            cursor.execute('INSERT INTO LastBookRead (QalamID, BookID) VALUES (%s, %s)', (user_id, book_id))
+        
+        conn.commit()
+        return jsonify({'message': 'Last read book updated successfully'}), 200
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
 
 
 # running the flask server    

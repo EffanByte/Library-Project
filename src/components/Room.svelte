@@ -62,14 +62,16 @@ return false;
 async function bookNow(selectedDate, selectedTime) {
   const roomNo = selectedRoom;
   const qalamID = $user.id;
+  alert("Room booked successfully!");
   if (qalamID == 0){
     alert("Please login to book a room!")
     return;
   }
+  alert()
   const reservationTime = `${selectedDate} ${selectedTime}`;
   console.log(selectedDate, selectedTime)
   try {
-    const response = await axios.post('http://localhost:8000/api/rooms', {
+    const response = await axios.post('http://localhost:8000/api/rooms1', {
       RoomNo: roomNo,
       QalamID: qalamID,
       ReservationTime: reservationTime,
@@ -79,6 +81,7 @@ async function bookNow(selectedDate, selectedTime) {
     if (response.data.message) {
       updateTable();
       console.log("Room booked successfully");
+      alert("Room booked successfully!");
     } else {
       console.error('Error:', response.data.error);
     }

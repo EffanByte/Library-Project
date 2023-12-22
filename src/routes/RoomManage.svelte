@@ -44,7 +44,7 @@ let rooms = [];
 
  async function cancelReservation(roomId, timing) {
     try {
-      const response = await fetch('http://localhost:8001/api/rooms/cancel', {
+      const response = ('http://localhost:8001/api/rooms/cancel', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

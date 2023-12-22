@@ -18,23 +18,61 @@ selectedBookID.subscribe(value => {
     if (bookID) {
         getBookDetails(bookID);
     }
+    else {
+        console.error('Book ID is missing from the URL parameters.');
+    }
 });
 
     onMount(async () => {
        // console.log("hello")
-        const bookID = $params.bookID; // get the book ID from the URL params
+       
+    const bookIDFromParams = $params.bookID;
+    console.log("Current Book ID:", bookIDFromParams);
+    if (bookIDFromParams) {
+        getBookDetails(bookIDFromParams);
+    } else {
+        console.error('Book ID is missing from the URL parameters.');
+    }
+
        /* console.log('Book ID:', bookID)
         if (bookID)
         {   
             await getBookDetails(bookID);
         }  */  
+        /*unsubscribe = pdfDataStore.subscribe(data => {
+        if (data) {
+            pdfDataUri = `data:application/pdf;base64,${data}`;
+            PDFObject.embed(pdfDataUri, '.container');
+            }
+        });*/
+        getBookDetails();
+        
     });
 
-    function viewPDF(){
-push(`/PDF/${bookID}`);
-    }
+    $: if (book && book.PDF) {
+    pdfDataStore.set(book.PDF);
+}
 
-    function rentBook() {
+
+    /*onDestroy(() => {
+    if (unsubscribe) {
+        unsubscribe();
+    }
+});*/
+
+function viewPDF() {
+    if (book && book.PDF) {
+        //console.log("Setting PDF in store:", book.PDF); // Log the PDF data being set
+        pdfDataStore.set(null);
+        pdfDataStore.set(book.PDF);
+        push('/BookPDF');
+    } else {
+        console.log("No PDF data available for this book.");
+    }
+}
+
+
+    function OpenModal() {
         if ($loggedIn.is == true){
         renting = true;
         }
@@ -86,14 +124,20 @@ push(`/PDF/${bookID}`);
 
 
     async function getBookDetails(id) {
-        try {
-            const response = await axios.get(`http://localhost:8000/api/books/${id}`);
-            book = response.data;
-        } catch (error) {
-            console.error('Error fetching book details:', error);
-            // Handle error, e.g., show a message or redirect
+    try {
+        const response = await axios.get(`http://localhost:8000/api/books/${id}`);
+        book = response.data;
+        if (book && book.PDF) {
+            pdfDataStore.set(book.PDF); // Update the store with the new PDF data
+            console.log("pdfDataStore set in BookDetail.svelte");
+        } else {
+            console.error('PDF data is missing for this book.');
         }
+    } catch (error) {
+        console.error('Error fetching book details:', error);
     }
+}
+
     
 </script>
 
